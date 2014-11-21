@@ -1,0 +1,14 @@
+﻿body {
+}
+
+#registerSection {
+    display: inline-block;
+    width: 250px;
+    background-color: gray;
+    text-align: center;
+}
+
+#registerButton, #registerLabel {
+    margin: 15px;
+    width: 150px;
+}
