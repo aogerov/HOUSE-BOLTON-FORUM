@@ -1,18 +1,18 @@
 ﻿'use strict';
 
-var ForumApp = (function () {
+var UserModule = (function () {
 
     var PARSE_APP_ID = 'TEDdEUZz4EKdPoByn5Zch6Mq4jX2b9Bwi60XmZcQ';
     var PARSE_REST_API_KEY = 'uFNll3OexgfW71uKS6o3ovDoOm2OIZZXdNJD1QRt';
 
     var RegisterUser = (function () {
         function RegisterUser(userName, email, pass1, pass2) {
-            this.checkValidUserName(userName);
+            this.isUserNameExists(userName);
             this.checkPasswords(pass1, pass2);
             this.AddToDB(userName, email, pass1);
         }
 
-        RegisterUser.prototype.checkValidUserName = function (username) {
+        RegisterUser.prototype.isUserNameExists = function (username) {
             console.log(username);
             var isExistingUser = false;
             $.ajax({
@@ -85,6 +85,8 @@ var ForumApp = (function () {
                 alert('Cannot create new user.');
             }).success(function (data) {
                 alert('Successfully registered!');
+
+                // returns new user's session token
                 console.log(data);
             });
         }
@@ -92,15 +94,50 @@ var ForumApp = (function () {
         return RegisterUser;
     }());
 
+    var LoginUser = (function () {
+        function LoginUser(username, pass) {
+            this.Login(username, pass);
+        }
+
+        LoginUser.prototype.Login = function (username, password) {
+            $.ajax({
+                type: "GET",
+                beforeSend: function (request) {
+                    request.setRequestHeader('X-Parse-Application-Id', PARSE_APP_ID);
+                    request.setRequestHeader('X-Parse-REST-API-Key', PARSE_REST_API_KEY);
+                },
+                url: "https://api.parse.com/1/login" + '?username=' + encodeURI(username) + '&password=' + encodeURI(password),
+                contentType: 'application/json',
+                dataType: 'json'
+            }).error(function () {
+                alert('Cannot login with this username and password.');
+            }).success(function (data) {
+                alert('Successfully logged-in!');
+
+                // returns new user's session token
+                console.log(data);
+            });
+
+        }
+
+        return LoginUser;
+    }());
+
     return {
         GetAppId: PARSE_APP_ID,
         GetRestApiKey: PARSE_REST_API_KEY,
-        Register: RegisterUser
+        Register: RegisterUser,
+        Login: LoginUser
     };
 }());
 
 $('#registerButton').click('click', reg);
 
 function reg() {
-    var newUser = new ForumApp.Register($('#userNameInput').val(), $('#emailInput').val(), $('#password1Input').val(), $('#password2Input').val());
+    var newUser = new UserModule.Register($('#userNameInput').val(), $('#emailInput').val(), $('#password1Input').val(), $('#password2Input').val());
+}
+
+$('#loginButton').click('click', login);
+function login() {
+    var loggedUser = new UserModule.Login($('#userNameLoginInput').val(), $('#passwordLoginInput').val());
 }

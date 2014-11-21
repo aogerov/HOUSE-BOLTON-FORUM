@@ -1,14 +1,17 @@
 ﻿body {
+   
 }
 
-#registerSection {
+#registerSection, #loginSection {
     display: inline-block;
     width: 250px;
     background-color: gray;
     text-align: center;
+    vertical-align: top;
 }
 
-#registerButton, #registerLabel {
+#registerButton, #registerLabel, #loginLabel, #loginButton {
+    display: inline-block;
     margin: 15px;
     width: 150px;
 }
