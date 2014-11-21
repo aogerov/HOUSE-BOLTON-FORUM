@@ -17,7 +17,7 @@ var categoriesModule = (function() {
 
 	function categoriesLoaded(data) {
 		var categories = data.results;
-		$categories = $('#categories').length == 0 ? $('body').append('<div id="categories"></div>') : $('#categories');
+		var $categories = $('#categories').length == 0 ? $('body').append('<div id="categories"></div>') : $('#categories');
 
 		$.each(categories, function(_, category) {
 			$('<h2>').text(category.name).appendTo($categories);
@@ -26,7 +26,7 @@ var categoriesModule = (function() {
 
 	function addCategory(name) {
 		// implying we have userModule.isLoggedIn, until then ->
-		userModule = {isLoggedIn: true}
+		var userModule = {isLoggedIn: true}
 
 		if (userModule.isLoggedIn) {
 			// We may need to add some checking on name later
