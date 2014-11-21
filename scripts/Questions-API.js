@@ -41,11 +41,16 @@
 
         //This is part of the View - The data is taken, we now have to visualize it
         function questionsLoaded(data) {
-            var allQuestions = data.results;
+            var allQuestions = data.results.sort( function(a,b){
+				return a.createdAt > b.createdAt;
+			});
             var questionsList = $("#questions");
             allQuestions.forEach(function (question) {
-                var questionElement = $("<li>");
-                questionElement.text(question.title);
+				var questionElement = $("<li>")
+                var questionTitle = $("<span>");
+                questionTitle.text(question.title);
+				questionElement.attr("id","question:" + question.objectId);
+				questionElement.append(questionTitle)
                 questionsList.append(questionElement);
             })
         }
