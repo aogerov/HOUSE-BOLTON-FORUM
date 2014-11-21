@@ -11,6 +11,18 @@
                 error: handleError
             });
         }
+        function getAllQuestionsFromCategory(categoryID) {
+            $.ajax({
+                method: "GET",
+                headers: {
+                    "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+                    "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+                },
+                url: 'https://api.parse.com/1/classes/Question?where={"category":{"__type":"Pointer","className":"Category","objectId":"' + categoryID + '"}}',
+                success: questionsLoaded,
+                error: handleError
+            });
+        }
 
         function searchQuestionsByTitle(keyword) {
             $.ajax({
@@ -24,11 +36,6 @@
                 error: handleError
             });
         }
-
-
-
-
-
 
 
 
@@ -49,6 +56,7 @@
 
         return {
             getAllQuestions: getAllQuestions,
+            getAllQuestionsFromCategory: getAllQuestionsFromCategory,
             searchQuestionsByTitle: searchQuestionsByTitle
         }
     })();
