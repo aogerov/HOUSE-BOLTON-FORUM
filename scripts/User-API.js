@@ -1,9 +1,9 @@
 ﻿'use strict';
 
 var UserModule = (function () {
+    function UserModule() {
 
-    var PARSE_APP_ID = 'TEDdEUZz4EKdPoByn5Zch6Mq4jX2b9Bwi60XmZcQ';
-    var PARSE_REST_API_KEY = 'uFNll3OexgfW71uKS6o3ovDoOm2OIZZXdNJD1QRt';
+    }
 
     var RegisterUser = (function () {
         function RegisterUser(userName, email, pass1, pass2) {
@@ -18,8 +18,8 @@ var UserModule = (function () {
             $.ajax({
                 method: 'GET',
                 headers: {
-                    'X-Parse-Application-Id': PARSE_APP_ID,
-                    'X-Parse-REST-API-Key': PARSE_REST_API_KEY
+                    'X-Parse-Application-Id': parseConstants.PARSE_APPLICATION_ID,
+                    'X-Parse-REST-API-Key': parseConstants.PARSE_REST_API_KEY
                 },
                 url: 'https://api.parse.com/1/users',
             }).success(function (data) {
@@ -69,8 +69,8 @@ var UserModule = (function () {
             $.ajax({
                 type: "POST",
                 beforeSend: function (request) {
-                    request.setRequestHeader('X-Parse-Application-Id', PARSE_APP_ID);
-                    request.setRequestHeader('X-Parse-REST-API-Key', PARSE_REST_API_KEY);
+                    request.setRequestHeader('X-Parse-Application-Id', parseConstants.PARSE_APPLICATION_ID);
+                    request.setRequestHeader('X-Parse-REST-API-Key', parseConstants.PARSE_REST_API_KEY);
                 },
                 // NOT WORKING FOR POST METHOD
                 //headers: {
@@ -78,7 +78,7 @@ var UserModule = (function () {
                 //    'X-Parse-REST-API-Key': PARSE_REST_API_KEY
                 //},
                 url: "https://api.parse.com/1/users",
-                data: JSON.stringify({ username: username, password: pass1, email: email }),
+                data: JSON.stringify({ username: username, password: pass1, email: email, rating: 0 }),
                 contentType: 'application/json',
                 dataType: 'json'
             }).error(function () {
@@ -103,8 +103,8 @@ var UserModule = (function () {
             $.ajax({
                 type: "GET",
                 beforeSend: function (request) {
-                    request.setRequestHeader('X-Parse-Application-Id', PARSE_APP_ID);
-                    request.setRequestHeader('X-Parse-REST-API-Key', PARSE_REST_API_KEY);
+                    request.setRequestHeader('X-Parse-Application-Id', parseConstants.PARSE_APPLICATION_ID);
+                    request.setRequestHeader('X-Parse-REST-API-Key', parseConstants.PARSE_REST_API_KEY);
                 },
                 url: "https://api.parse.com/1/login" + '?username=' + encodeURI(username) + '&password=' + encodeURI(password),
                 contentType: 'application/json',
@@ -115,19 +115,42 @@ var UserModule = (function () {
                 alert('Successfully logged-in!');
 
                 // returns new user's session token
-                console.log(data);
+                // console.log(data);
             });
-
         }
 
         return LoginUser;
     }());
 
+    UserModule.prototype.getUserById = function (userId) {
+        var user;
+        $.ajax({
+            type: "GET",
+            beforeSend: function (request) {
+                request.setRequestHeader('X-Parse-Application-Id', parseConstants.PARSE_APPLICATION_ID);
+                request.setRequestHeader('X-Parse-REST-API-Key', parseConstants.PARSE_REST_API_KEY);
+            },
+            url: "https://api.parse.com/1/users/" + encodeURI(userId),
+            contentType: 'application/json',
+            dataType: 'json',
+            async: false,
+        }).error(function () {
+            alert('Cannot get user with that ID.');
+            user = {};
+            return;
+        }).success(function (data) {
+            alert('Successfully got user by ID.');
+            // console.log(data);
+            user = data;
+        });
+
+        return user;
+    }
+
     return {
-        GetAppId: PARSE_APP_ID,
-        GetRestApiKey: PARSE_REST_API_KEY,
         Register: RegisterUser,
-        Login: LoginUser
+        Login: LoginUser,
+        GetUserById: UserModule.prototype.getUserById
     };
 }());
 
@@ -140,4 +163,11 @@ function reg() {
 $('#loginButton').click('click', login);
 function login() {
     var loggedUser = new UserModule.Login($('#userNameLoginInput').val(), $('#passwordLoginInput').val());
+}
+
+// for TEST add to loginButton to check userByID 
+$('#loginButton').click('click', getUserByID);
+function getUserByID() {
+    var gottenUserById = new UserModule.GetUserById('qZ047wDesX');
+    console.log(gottenUserById);
 }
