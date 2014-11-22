@@ -8,26 +8,16 @@
     <script src="scripts/Questions-API.js"></script>
 	<script src="scripts/Answers-API.js"></script>
 	<script src="scripts/Categories-API.js"></script>
+	<script src="scripts/Question-Answer-View.js"></script>
 </head>
 <body>
 <div>
     <ul id="questions">
-		<li id="question:AInXFgojkL">
-			<h4>Sample Question</h4>
-			<ul id="answers"></ul>
-		</li>
+		
     </ul>
 </div>
 <script>
-    //questionsModule.getAllQuestions();
-	//questionsModule.searchQuestionsByTitle("1");
-    //questionsModule.getAllQuestionsFromCategory("YjyaYWrWaj");
-	answersModule.getAllAnswersFromQuestion("AInXFgojkL");
-	//categoriesModule.getAllCategories();
-	
-	//answersModule.addAnswer("AInXFgojkL", "брей то взе че стана!", "geRiBmu9gz");
-	//answersModule.deleteAnswer("dW2X5c8R8H"); //already deleted, try with another id
-	//answersModule.editAnswer("6cIFbXVCq5", "йейейейейей"); //change text to see edit
+	QuestionAnswerView.visualize();
 </script>
 </body>
 </html>

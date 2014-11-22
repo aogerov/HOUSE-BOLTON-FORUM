@@ -1,62 +1,35 @@
     var questionsModule = (function () {
         function getAllQuestions() {
-            $.ajax({
+            return $.ajax({
                 method: "GET",
                 headers: {
                     "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
                     "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
                 },
-                url: "https://api.parse.com/1/classes/Question",
-                success: questionsLoaded,
-                error: handleError
+                url: "https://api.parse.com/1/classes/Question"
             });
         }
+		
         function getAllQuestionsFromCategory(categoryID) {
-            $.ajax({
+            return $.ajax({
                 method: "GET",
                 headers: {
                     "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
                     "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
                 },
                 url: 'https://api.parse.com/1/classes/Question?where={"category":{"__type":"Pointer","className":"Category","objectId":"' + categoryID + '"}}',
-                success: questionsLoaded,
-                error: handleError
             });
         }
 
         function searchQuestionsByTitle(keyword) {
-            $.ajax({
+            return $.ajax({
                 method: "GET",
                 headers: {
                     "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
                     "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
                 },
                 url: 'https://api.parse.com/1/classes/Question?where={"title":{"$regex":"' + keyword + '", "$options":"i"}}',
-                success: questionsLoaded,
-                error: handleError
             });
-        }
-
-
-
-        //This is part of the View - The data is taken, we now have to visualize it
-        function questionsLoaded(data) {
-            var allQuestions = data.results.sort( function(a,b){
-				return a.createdAt > b.createdAt;
-			});
-            var questionsList = $("#questions");
-            allQuestions.forEach(function (question) {
-				var questionElement = $("<li>")
-                var questionTitle = $("<span>");
-                questionTitle.text(question.title);
-				questionElement.attr("id","question:" + question.objectId);
-				questionElement.append(questionTitle)
-                questionsList.append(questionElement);
-            })
-        }
-
-        function handleError() {
-            alert("We have an error");
         }
 
         return {
