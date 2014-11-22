@@ -89,12 +89,38 @@
             });
         }
 
+        function deleteQuestion(questionID) {
+            return $.ajax({
+                method: "DELETE",
+                headers: {
+                    "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+                    "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+                },
+                url: "https://api.parse.com/1/classes/Question/" + questionID
+            });
+        }
+
+        function editQuestion(questionID, content) {
+            return $.ajax({
+                method: "PUT",
+                headers: {
+                    "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+                    "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+                },
+                data: JSON.stringify({content: content}),
+                contentType: 'application/json',
+                url: "https://api.parse.com/1/classes/Question/" + questionID
+            });
+        }
+
         return {
             addQuestion: addQuestion,
             getQuestionByID: getQuestionByID,
             getAllQuestions: getAllQuestions,
             getAllQuestionsFromCategory: getAllQuestionsFromCategory,
             getAllQuestionsFromUser: getAllQuestionsFromUser,
-            searchQuestionsByTitle: searchQuestionsByTitle
+            searchQuestionsByTitle: searchQuestionsByTitle,
+            deleteQuestion: deleteQuestion,
+            editQuestion: editQuestion
         }
     })();
