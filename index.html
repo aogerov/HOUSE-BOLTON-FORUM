@@ -8,17 +8,22 @@
     <script src="scripts/Questions-API.js"></script>
 	<script src="scripts/Answers-API.js"></script>
 	<script src="scripts/Categories-API.js"></script>
+	 <script src="scripts/Tags-API.js"></script>
 </head>
 <body>
 <div>
     <ul id="questions">
     </ul>
 </div>
+	<h2>Tags</h2>
+	<div id="tags">
+	</div>
 <script>
     questionsModule.getAllQuestions();
 	//questionsModule.searchQuestionsByTitle("1");
     //questionsModule.getAllQuestionsFromCategory("YjyaYWrWaj");
 	categoriesModule.getAllCategories();
+	tagModule.getAllTags();
 </script>
 </body>
 </html>
