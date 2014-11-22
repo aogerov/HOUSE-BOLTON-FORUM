@@ -17,12 +17,12 @@ var QuestionAnswerView = (function(){
 		});
 		var questionsList = $("#questions");
 		allQuestions.forEach(function (question) {
-			var questionElement = $("<li>")
-			var questionTitle = $("<span>");
-			questionTitle.text(question.title);
-			questionElement.attr("id","question" + question.objectId);
-			questionElement.append(questionTitle)
-			questionsList.append(questionElement);
+			var questionTitle = $("<span>").text(question.title),
+				questionElement = $("<li>")
+					.attr("data-id",question.objectId)
+					.attr("data-type","question")
+					.append(questionTitle)
+					.appendTo(questionsList);
 			answerView(question.objectId);
 		})
 	}
@@ -30,21 +30,24 @@ var QuestionAnswerView = (function(){
 	function answerView(questionId){
 		var promise = answersModule.getAllAnswersFromQuestion(questionId);
 		promise.success(function(data) {
-			var allAnswers = data.results;
-			var answerList = $("<ul>");
-			answerList.attr("id","answersTo" + questionId);
+			var allAnswers = data.results,
+				answerList = $("<ul>")
+					.attr("data-id",questionId)
+					.attr("data-type","answersToQuestion"),
+				questionElement = $("[data-id='" + questionId + "'][data-type='question']");
 			
 			allAnswers.sort( function(a,b){
 				return a.createdAt > b.createdAt;
 			});
 			
 			allAnswers.forEach(function (answer) {
-				var answerElement = $('<li>').text(answer.content).attr("id","answer" + answer.objectId);
+				var answerElement = $('<li>')
+					.text(answer.content)
+					.attr("data-id",answer.objectId)
+					.attr("data-type","answer");
 				answerList.append(answerElement);
 			});
-			
-			var questionElementId = "#question" + questionId;
-			var questionElement = $(questionElementId);
+
 			questionElement.append(answerList);
 		});
 		
