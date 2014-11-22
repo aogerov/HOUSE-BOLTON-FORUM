@@ -27,7 +27,6 @@ var categoriesModule = (function() {
 	function addCategory(name) {
 		// implying we have userModule.isLoggedIn, until then ->
 		var userModule = {isLoggedIn: true}
-
 		if (userModule.isLoggedIn) {
 			// We may need to add some checking on name later
 			$.ajax({
