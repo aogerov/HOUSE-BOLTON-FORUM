@@ -31,11 +31,15 @@ var categoriesModule = (function() {
 			// We may need to add some checking on name later
 			$.ajax({
 				type: "POST",
-				headers: {
-					"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
-					"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
-				},
-				url: "https://api.parse.com/1/Category",
+				beforeSend: function (request) {
+                    request.setRequestHeader('X-Parse-Application-Id', parseConstants.PARSE_APPLICATION_ID);
+                    request.setRequestHeader('X-Parse-REST-API-Key', parseConstants.PARSE_REST_API_KEY);
+                },
+				// headers: {
+				// 	"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+				// 	"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+				// },
+				url: "https://api.parse.com/1/classes/Category",
 				data: JSON.stringify({name: name}),
 				contentType: 'application/json',
 				dataType: 'json',
@@ -55,17 +59,23 @@ var categoriesModule = (function() {
 	}
 
 	function deleteCategory(categoryId) {
-		if(userModule.isLoggedIn) {
-			$.ajax({
-				type: "DELETE",
-				headers: {
-					"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
-					"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
-				},
-				url: "https://api.parse.com/1/Category/" + categoryId,
-				success: categoryDeleted,
-				error: handleCategoryDeleteError
-			});
+		if(categoriesModule.checkIfCategoryExits(categoryId)){
+			// implying we have userModule.isLoggedIn, until then ->
+			var userModule = {isLoggedIn: true}
+			if(userModule.isLoggedIn) {
+				$.ajax({
+					type: "DELETE",
+					headers: {
+						"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+						"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+					},
+					url: "https://api.parse.com/1/classes/Category/" + categoryId,
+					success: categoryDeleted,
+					error: handleCategoryDeleteError
+				});
+			}
+		} else {
+			alert('This category does not exist.');
 		}
 	}
 
@@ -79,9 +89,26 @@ var categoriesModule = (function() {
 		throw new Error("Could not delete category");
 	}
 
+	function checkIfCategoryExits(categoryId) {
+		var categoryExists = false;
+		$.ajax({
+			method: "GET",
+			headers: {
+				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+			},
+			url: "https://api.parse.com/1/classes/Category/" + categoryId
+		}).success(function() {
+			categoryExists = true;
+		});
+
+		return categoryExists;
+	}
+
 	return {
 		getAllCategories: getAllCategories,
 		addCategory: addCategory,
-		deleteCategory: deleteCategory
+		deleteCategory: deleteCategory,
+		checkIfCategoryExits: checkIfCategoryExits
 	}
 })();
