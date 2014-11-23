@@ -11,13 +11,8 @@ var tagModule = (function() {
 	}
 
 	function addTag(name) {
-
 		var tag = {
-			name: name,
-			question: {
-				__type: "Relation", 
-				className:"Question"
-			}
+			name: name
 		};
 
 		return $.ajax({
@@ -50,5 +45,4 @@ var tagModule = (function() {
 		addTag: addTag,
 		deleteTag: deleteTag
 	}
-
 })();

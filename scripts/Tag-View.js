@@ -21,7 +21,26 @@ var TagView = (function() {
 			$(tagLink).css({"font-size": 16 + tag.visited + "px"});
 			tagLink.appendTo(tagList);
 			$(tagLink).click(tagClick);
+			tagLink.click(visualizeQuestionsOnTagClick);
 		})
+	}
+	
+	function visualizeQuestionsOnTagClick(){
+		var tag = $(this).data('tag'),
+			promise = QuestionTagRelationModule.getRelationsByTag(tag.objectId);
+		
+		promise.success(function(data){
+			var allRelations = data.results;
+			allRelations.forEach(function(relation){
+				//console.log(relation);
+				var questionPromise = questionsModule.getQuestionByID(relation.question.objectId);
+				questionPromise.success(function(question){
+					QuestionAnswerView.visualize(question.objectId);
+				});
+				questionPromise.error(handleError);
+			})
+		});
+		promise.error(handleError);
 	}
 
 	function tagClick() {
@@ -47,7 +66,7 @@ var TagView = (function() {
 	}
 
 	function handleError() {
-		alert("Error");
+		console.log("Error");
 	 }
 
 	return {
