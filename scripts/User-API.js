@@ -2,105 +2,126 @@
 
 var UserModule = (function () {
     function UserModule() {
-
+      
     }
-
+    
     var RegisterUser = (function () {
         function RegisterUser(userName, email, pass1, pass2) {
-            this.isUserNameExists(userName);
-            this.checkPasswords(pass1, pass2);
-            this.AddToDB(userName, email, pass1);
-        }
+            // checks username exists
+            return getUserByUserName(userName)
+            .success(function (data) {
+                if (data.results.length !== 0) {
+                    throw new Error('User already exist with that username.');
+                }
+                
+                checkPasswords(pass1, pass2);
+                
+                return addToDatabase(userName, email, pass1)
+                    .error(function () {
+                    alert('Cannot create new user.');
+                    throw new Error('Cannot create new user');
+                })
+                    .success(function (dbData) {
+                    alert('Successfully registered!');
+                    return dbData;
+                    // returns new user's session token
+                    // console.log(dbData);
+                });
+            })
+            .error(function () {
+                throw new Error('Cannot connect to DB.');
+            });
+            
 
-        RegisterUser.prototype.isUserNameExists = function (username) {
-            console.log(username);
-            var isExistingUser = false;
-            $.ajax({
+        }
+        
+        function isUserNameExists(username) {
+            var isExists;
+            getUserByUserName(username)
+            .success(function (data) {
+                if (data.results.length !== 0) {
+                    isExists = true;
+                } else {
+                    isExists = false;
+                }
+            }).error(function () {
+                throw new Error('Cannot connect to DB.');
+            });
+            console.log('IN isUserName');
+            return isExists;
+        }
+        
+        function getUserByUserName(username) {
+            return $.ajax({
                 method: 'GET',
                 headers: {
                     'X-Parse-Application-Id': parseConstants.PARSE_APPLICATION_ID,
                     'X-Parse-REST-API-Key': parseConstants.PARSE_REST_API_KEY
                 },
-                url: 'https://api.parse.com/1/users',
-            }).success(function (data) {
-
-                for (var u in data.results) {
-                    var user = data.results[u];
-                    if (user.username.toString().toLowerCase() === username.toString().toLowerCase()) {
-                        isExistingUser = true;
-                        $('#userNameInput').focus().css('background-color', 'red');
-                        throw new Error('Username is taken');
-                    }
-                }
-
-                $('#userNameInput').focus().css('background-color', 'white');
-                //alert('No such user!!');
-            }).error(function () {
-                alert('Cannot load users.');
+                url: 'https://api.parse.com/1/users?where={"username":"' + username + '"}',
             });
         }
-
-        RegisterUser.prototype.checkValidEmail = function (email) {
+        
+        function checkValidEmail(email) {
             // TODO: imlement email validation
         }
-
-        RegisterUser.prototype.checkPasswords = function (pass1, pass2) {
+        
+        function checkPasswords(pass1, pass2) {
             if (!pass1) {
-                $('#password1Input').focus().css('background-color', 'red');
+                // $('#password1Input').focus().css('background-color', 'red');
                 throw new Error('Password cannot be empty or white space(s)');
             }
-
+            
             if (!pass2) {
-                $('#password2Input').focus().css('background-color', 'red');
+                // $('#password2Input').focus().css('background-color', 'red');
                 throw new Error('Password cannot be empty or white space(s)');
             }
-
+            
             if (pass1 !== pass2) {
                 // may put password length demand
-                $('#password2Input').focus().css('background-color', 'red');
+                // $('#password2Input').focus().css('background-color', 'red');
                 throw new Error('Password is not the same!');
             }
-
-            $('#password1Input').focus().css('background-color', 'white');
-            $('#password2Input').focus().css('background-color', 'white');
+            
+            // $('#password1Input').focus().css('background-color', 'white');
+            // $('#password2Input').focus().css('background-color', 'white');
         }
-
-        RegisterUser.prototype.AddToDB = function (username, email, pass1) {
-            $.ajax({
+        
+        function addToDatabase(username, email, pass1) {
+            return $.ajax({
                 type: "POST",
-                beforeSend: function (request) {
-                    request.setRequestHeader('X-Parse-Application-Id', parseConstants.PARSE_APPLICATION_ID);
-                    request.setRequestHeader('X-Parse-REST-API-Key', parseConstants.PARSE_REST_API_KEY);
-                },
-                // NOT WORKING FOR POST METHOD
-                //headers: {
-                //    'X-Parse-Application-Id': PARSE_APP_ID,
-                //    'X-Parse-REST-API-Key': PARSE_REST_API_KEY
+                //beforeSend: function (request) {
+                //    request.setRequestHeader('X-Parse-Application-Id', parseConstants.PARSE_APPLICATION_ID);
+                //    request.setRequestHeader('X-Parse-REST-API-Key', parseConstants.PARSE_REST_API_KEY);
                 //},
+                headers: {
+                    'X-Parse-Application-Id': parseConstants.PARSE_APPLICATION_ID,
+                    'X-Parse-REST-API-Key': parseConstants.PARSE_REST_API_KEY
+                },
                 url: "https://api.parse.com/1/users",
                 data: JSON.stringify({ username: username, password: pass1, email: email, rating: 0 }),
                 contentType: 'application/json',
                 dataType: 'json'
-            }).error(function () {
-                alert('Cannot create new user.');
-            }).success(function (data) {
-                alert('Successfully registered!');
-
-                // returns new user's session token
-                console.log(data);
             });
         }
-
+        
         return RegisterUser;
     }());
-
+    
     var LoginUser = (function () {
         function LoginUser(username, pass) {
-            this.Login(username, pass);
+            return login(username, pass);
+            //.error(function () {
+            //    alert('Cannot login with this username and password.');
+            //}).success(function (data) {
+            //    alert('Successfully logged-in!');
+            //    // returns new user's session token
+            //    // console.log(data);
+            //});;
         }
-
-        LoginUser.prototype.Login = function (username, password) {
-            $.ajax({
+        
+        function login(username, password) {
+            return $.ajax({
                 type: "GET",
                 beforeSend: function (request) {
                     request.setRequestHeader('X-Parse-Application-Id', parseConstants.PARSE_APPLICATION_ID);
@@ -109,22 +130,14 @@ var UserModule = (function () {
                 url: "https://api.parse.com/1/login" + '?username=' + encodeURI(username) + '&password=' + encodeURI(password),
                 contentType: 'application/json',
                 dataType: 'json'
-            }).error(function () {
-                alert('Cannot login with this username and password.');
-            }).success(function (data) {
-                alert('Successfully logged-in!');
-
-                // returns new user's session token
-                // console.log(data);
             });
         }
-
+        
         return LoginUser;
     }());
-
-    UserModule.prototype.getUserById = function (userId) {
-        var user;
-        $.ajax({
+    
+    function getUserById(userId) {
+        return $.ajax({
             type: "GET",
             beforeSend: function (request) {
                 request.setRequestHeader('X-Parse-Application-Id', parseConstants.PARSE_APPLICATION_ID);
@@ -133,41 +146,59 @@ var UserModule = (function () {
             url: "https://api.parse.com/1/users/" + encodeURI(userId),
             contentType: 'application/json',
             dataType: 'json',
-            async: false,
         }).error(function () {
             alert('Cannot get user with that ID.');
-            user = {};
-            return;
         }).success(function (data) {
-            alert('Successfully got user by ID.');
+            // alert('Successfully got user by ID.');
             // console.log(data);
-            user = data;
         });
-
-        return user;
     }
-
+    
+    function editUserData(userId, sessionToken, columnToChange, newContent) {
+        if (columnToChange === 'username') {
+            throw new Error('Username cannot be changed');
+        }
+        //if (columnToChange === 'ranking') {
+        //    throw new Error('Ranking cannot be changed');
+        //}
+        if (columnToChange === 'ACL') {
+            throw new Error('Access control cannot be changed');
+        }
+        
+        var x = new Object();
+        var propertyName = columnToChange;
+        var propertyValue = newContent;
+        eval("x." + propertyName + "='" + propertyValue + "'");
+        
+        var newJsonString;
+        if (typeof (newContent) === 'string') {
+            newJsonString = '{"' + columnToChange + '":"' + newContent + '"}';
+        } else {
+            //if (typeof (newContent) === 'number')
+            newJsonString = '{"' + columnToChange + '":' + newContent + '}';
+        }
+        
+        var obj = JSON.parse(newJsonString);
+        // console.log(obj);
+        
+        return $.ajax({
+            method: "PUT",
+            beforeSend: function (request) {
+                request.setRequestHeader('X-Parse-Application-Id', parseConstants.PARSE_APPLICATION_ID);
+                request.setRequestHeader('X-Parse-REST-API-Key', parseConstants.PARSE_REST_API_KEY);
+                request.setRequestHeader('X-Parse-Session-Token', sessionToken);
+            },
+            
+            data: JSON.stringify(obj),
+            contentType: 'application/json',
+            url: "https://api.parse.com/1/users/" + userId
+        });
+    }
+    
     return {
         Register: RegisterUser,
         Login: LoginUser,
-        GetUserById: UserModule.prototype.getUserById
+        GetUserById: getUserById,
+        EditUserData: editUserData
     };
 }());
-
-$('#registerButton').click('click', reg);
-
-function reg() {
-    var newUser = new UserModule.Register($('#userNameInput').val(), $('#emailInput').val(), $('#password1Input').val(), $('#password2Input').val());
-}
-
-$('#loginButton').click('click', login);
-function login() {
-    var loggedUser = new UserModule.Login($('#userNameLoginInput').val(), $('#passwordLoginInput').val());
-}
-
-// for TEST add to loginButton to check userByID 
-$('#loginButton').click('click', getUserByID);
-function getUserByID() {
-    var gottenUserById = new UserModule.GetUserById('qZ047wDesX');
-    console.log(gottenUserById);
-}

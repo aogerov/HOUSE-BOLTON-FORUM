@@ -1,5 +1,4 @@
 ﻿body {
-   
 }
 
 #registerSection, #loginSection {
@@ -14,4 +13,8 @@
     display: inline-block;
     margin: 15px;
     width: 150px;
+}
+
+#loginMessageLabel {
+    display: inline-block;
 }

@@ -8,22 +8,29 @@
     <script src="scripts/globalConstants.js"></script>
 </head>
 <body>
-    <div id="registerSection">
-        <label id="registerLabel">Register:</label>
-        <input type="text" id="userNameInput" placeholder="username..." value="" />
-        <input type="text" id="emailInput" placeholder="email..." value="" />
-        <input type="password" id="password1Input" placeholder="password..." value="" />
-        <input type="password" id="password2Input" placeholder="password again..." value="" />
-        <input type="button" id="registerButton" value="Register" />
-    </div>
+    <div id="parentContainer"></div>
 
-    <div id="loginSection">
-        <label id="loginLabel">Login:</label>
-        <input type="text" id="userNameLoginInput" placeholder="username..." value="" />
-        <input type="password" id="passwordLoginInput" placeholder="password..." value="" />
-        <input type="button" id="loginButton" value="Login" />
-    </div>
     <script src="libs/jquery-2.1.1.js"></script>
+    <script src="scripts/User-View.js"></script>
     <script src="scripts/User-API.js"></script>
+    <script>
+        var reg = new UserView.RegisterView($('#parentContainer')[0]);
+        var log = new UserView.LoginView($('#parentContainer')[0]);
+        //var logUser = new UserModule.Login('Icakis', '123');
+        //logUser.success(
+        //     function (data) {
+        //         console.log(data.sessionToken);
+        //         var editUserData = new UserModule.EditUserData('qZ047wDesX', data.sessionToken, 'email', 'Icakis_87@abv.bg');
+        //         var editUserData2 = new UserModule.EditUserData('qZ047wDesX', data.sessionToken, 'ranking', 55);
+        //     });
+
+
+        //var removeReg = new UserView.RemoveRegisterView();
+        //var removeLog = new UserView.RemoveLoginView();
+
+        //var gottenUserById = new UserModule.GetUserById('qZ047wDesX').success(function (data) {
+        //    console.log(data);
+        //});
+    </script>
 </body>
 </html>
