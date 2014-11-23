@@ -1,0 +1,50 @@
+@media all and (max-width: 780px) {
+    .body {
+        width: 95%;
+    }
+    body header {
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: space-between;
+        box-sizing: border-box;
+    }
+    body header img {
+       min-width: 100%;
+    }
+    body header nav {
+        width: 100%;
+    }
+    body header nav ul {
+        display: flex;
+        justify-content: space-between;
+        flex-flow: column wrap;
+        padding: 0px;
+        margin-right: 40px;
+    }
+    body header nav ul li {
+        width: 93%;
+    }
+    body header nav ul li a{
+        width: 93%;
+        background-color: #000;
+
+
+    }
+    .mainContent {
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 100px;
+    }
+    .content {
+        width: 100%;
+    }
+    .top-sidebar {
+        width: 100%;
+        margin-top: 10px;
+    }
+    .middle-sidebar {
+        width: 100%;
+    }
+}
