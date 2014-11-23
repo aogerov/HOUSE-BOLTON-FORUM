@@ -1,63 +1,54 @@
 var tagModule = (function() {
 	function getAllTags() {
-		$.ajax({
+		return $.ajax({
 			method: "GET",
 			headers: {
 				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
-                "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 			},
-			url: "https://api.parse.com/1/classes/Tag",
-			success: tagLoaded,
-			error: handleError
+			url: "https://api.parse.com/1/classes/Tag"
 		});
 	}
 
-	function tagLoaded(data) {
-			var allTags = data.results;
-			var tagItem = $('<ul>');
+	function addTag(name) {
 
-			// allTags.forEach(function(tag) {
-			// 	var tagLink = $("<li><a href='#'></li>").text(tag.name);
-			// 	$(tagLink).data('tag', tag);
-			// 	tagLink.appendTo(tagItem);
-			// 	$(tagLink).click(tagClick);
-			// 	tagItem.appendTo($('#tags'));
-			// })
+		var tag = {
+			name: name,
+			question: {
+				__type: "Relation", 
+				className:"Question"
+			}
+		};
 
-			$.each(allTags, function(i, tag) {
-				var tagLink = $("<li><a href='#'>").text(tag.name);
-			 	$(tagLink).data('tag', tag);
-			 	tagLink.appendTo(tagItem);
-			 	$(tagLink).click(tagClick);
-			 	tagItem.appendTo($('#tags'));
-			 	//console.log(tag.question);
-			});
+		return $.ajax({
+			type: "POST",
+			headers: {
+				"X-Parse-Application-Id": PARSE_APP_ID,
+				"X-Parse-REST-API-Key": PARSE_REST_API_KEY
+			},
+			url: "https://api.parse.com/1/classes/Tag",
+			data: JSON.stringify(tag),
+			contentType: 'application/json',
+			dataType: 'json',
+		});
 
 	}
 
-	function tagClick() {
-		var tag = $(this).data('tag');
-		$.ajax({
-				method: "PUT",
-				headers: {
-					"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
-                    "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
-				},
-				url: "https://api.parse.com/1/classes/Tag/" + 
-					tag.objectId,
-				data: JSON.stringify(
-					{"visited": tag.visited + 1}
-				),
-				contentType: "application/json",
-				error: handleError
-			});
+	function deleteTag(tagID){
+		return $.ajax({
+			method: "DELETE",
+			headers: {
+				"X-Parse-Application-Id": PARSE_APP_ID,
+				"X-Parse-REST-API-Key": PARSE_REST_API_KEY
+			},
+			url: "https://api.parse.com/1/classes/Tag/" + tagID
+		});
 	}
-
-	function handleError() {
-		alert("Error");
-	}
+	
 	return {
-		getAllTags: getAllTags
+		getAllTags: getAllTags,
+		addTag: addTag,
+		deleteTag: deleteTag
 	}
 
 })();
