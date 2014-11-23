@@ -1,52 +1,27 @@
-var categoriesModule = (function() {
-
+var CategoriesModule = (function() {
 	function getAllCategories() {
-		$.ajax({
+		return $.ajax({
 			method: "GET",
 				headers: {
 				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
 				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 			},
-			url: "https://api.parse.com/1/classes/Category",
-			success: categoriesLoaded,
-			error: function(err) {
-				throw new Error("Could not load categories");
-			}
-		});
-	}
-
-	function categoriesLoaded(data) {
-		var categories = data.results;
-		var $categories = $('#categories').length == 0 ? $('body').append('<div id="categories"></div>') : $('#categories');
-
-		$.each(categories, function(_, category) {
-			$('<h2>').text(category.name).appendTo($categories);
+			url: "https://api.parse.com/1/classes/Category"
 		});
 	}
 
 	function addCategory(name) {
-		// implying we have userModule.isLoggedIn, until then ->
-		var userModule = {isLoggedIn: true}
-		if (userModule.isLoggedIn) {
-			// We may need to add some checking on name later
-			$.ajax({
-				type: "POST",
-				beforeSend: function (request) {
-                    request.setRequestHeader('X-Parse-Application-Id', parseConstants.PARSE_APPLICATION_ID);
-                    request.setRequestHeader('X-Parse-REST-API-Key', parseConstants.PARSE_REST_API_KEY);
-                },
-				// headers: {
-				// 	"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
-				// 	"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
-				// },
-				url: "https://api.parse.com/1/classes/Category",
-				data: JSON.stringify({name: name}),
-				contentType: 'application/json',
-				dataType: 'json',
-				success: categoryAdded,
-				error: handleCategoryAddError
-			});
-		}
+		return $.ajax({
+			type: "POST",
+			headers: {
+				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+			},
+			url: "https://api.parse.com/1/classes/Category",
+			data: JSON.stringify({name: name}),
+			contentType: 'application/json',
+			dataType: 'json'
+		});
 	}
 
 	function categoryAdded(data) {
@@ -59,24 +34,14 @@ var categoriesModule = (function() {
 	}
 
 	function deleteCategory(categoryId) {
-		if(categoriesModule.checkIfCategoryExits(categoryId)){
-			// implying we have userModule.isLoggedIn, until then ->
-			var userModule = {isLoggedIn: true}
-			if(userModule.isLoggedIn) {
-				$.ajax({
-					type: "DELETE",
-					headers: {
-						"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
-						"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
-					},
-					url: "https://api.parse.com/1/classes/Category/" + categoryId,
-					success: categoryDeleted,
-					error: handleCategoryDeleteError
-				});
-			}
-		} else {
-			alert('This category does not exist.');
-		}
+		return $.ajax({
+			type: "DELETE",
+			headers: {
+				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+			},
+			url: "https://api.parse.com/1/classes/Category/" + categoryId
+		});
 	}
 
 	function categoryDeleted(data) {
