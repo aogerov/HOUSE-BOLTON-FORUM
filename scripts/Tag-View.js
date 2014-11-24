@@ -7,6 +7,19 @@ var TagView = (function() {
 		consol.log("cannot visualize tags");
 		});
 	}
+	
+	function checkTagsByName(name) {
+		var promise = tagModule.getTagByName(name);
+		promise.success(function(data) {
+				if (data.results.length) {
+					var tagId = data.results[0].objectId;
+					console.log(data.results[0].objectId);
+				} else {
+					tagModule.addTag(name);
+				}
+		});
+		promise.error(handleError);
+	}
 
 	function visualizeTags(data) {
 		var allTags = data.results;
@@ -70,7 +83,9 @@ var TagView = (function() {
 	 }
 
 	return {
-		visualize: visualize
+		visualize: visualize,
+		checkTagsByName: checkTagsByName,
+		visualizeQuestionsOnTagClick: visualizeQuestionsOnTagClick		
 	}
 
 })();

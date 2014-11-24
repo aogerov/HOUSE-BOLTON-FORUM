@@ -40,9 +40,35 @@ var tagModule = (function() {
 		});
 	}
 	
+	function getTagByName(name) {
+		return $.ajax({
+				method: "GET",
+				headers: {
+					"X-Parse-Application-Id": PARSE_APP_ID,
+					"X-Parse-REST-API-Key": PARSE_REST_API_KEY
+				},
+				url: 'https://api.parse.com/1/classes/Tag?where={"name":"' + name +'"}',
+			});
+
+	}
+	function getTagById(tagId) {
+		return $.ajax({
+				method: "GET",
+				headers: {
+					"X-Parse-Application-Id": PARSE_APP_ID,
+					"X-Parse-REST-API-Key": PARSE_REST_API_KEY
+				},
+				url: 'https://api.parse.com/1/classes/Tag?where={"objectId":"' + tagId +'"}',
+			});
+
+	}
+	
 	return {
 		getAllTags: getAllTags,
 		addTag: addTag,
-		deleteTag: deleteTag
+		deleteTag: deleteTag,
+		getTagByName: getTagByName,
+		getTagById: getTagById
+		
 	}
 })();

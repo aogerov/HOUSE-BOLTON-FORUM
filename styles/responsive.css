@@ -9,7 +9,7 @@
         box-sizing: border-box;
     }
     body header img {
-       min-width: 100%;
+       min-width: 30%;
     }
     body header nav {
         width: 100%;

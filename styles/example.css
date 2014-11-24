@@ -3,8 +3,10 @@
  */
    
 body {
-	background-image: url('../images/a-world-connected.jpg');
-	background-position: fixed;
+	background-image: url('../images/blog-pic.png');
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
 	color: #000305;
 	font-size: 87.5%; /* Base font size: 14px */
 	font-family: 'Trebuchet MS', Trebuchet, 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
