@@ -1,7 +1,7 @@
 ﻿body {
 }
 
-#registerSection, #loginSection {
+#registerSection, #loginSection, #userProfileSection {
     display: inline-block;
     width: 250px;
     background-color: gray;
@@ -17,4 +17,13 @@
 
 #loginMessageLabel {
     display: inline-block;
+}
+
+#userProfileSection {
+    text-align: left;
+}
+
+#imageProfileLabel {
+    width: 200px;
+    height: 200px;
 }
