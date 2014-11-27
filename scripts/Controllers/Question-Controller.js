@@ -18,14 +18,13 @@ var questionController = (function () {
                 var questionAuthor;
                 var questionCategory = "IMPLEMENTING";
                 var questionTags = "some tags";
-                $.ajaxSetup({async: false});
-                var responseJSONUser = UserModule.getUserById(question.createdBy.objectId).responseJSON;
-                questionAuthor = responseJSONUser.username;
-                $.ajaxSetup({async: true});
-                var questionVisits = question.visits;
+				UserModule.getUserById(question.createdBy.objectId).success(function (userData){
+				questionAuthor = userData.username;
+				var questionVisits = question.visits;
                 var questionVotes = question.votes;
-
                 questionsTable.append(questionView.visualizeSmallQuestion(question.objectId, questionTitle, questionContent, questionAuthor, questionCategory, questionTags, questionVisits, questionVotes));
+				})
+
             });
 
             $('.small-question-title').click(function () {
