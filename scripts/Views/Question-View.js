@@ -1,6 +1,6 @@
 var questionView = (function () {
-    function visualizeSmallQuestion(questionTitle, questionContent, questionAuthor, questionCategory, questionTags, questionVisits, questionVotes){
-        var title = $('<h4>').attr('class', 'small-question-title').text(questionTitle);
+    function visualizeSmallQuestion(questionID, questionTitle, questionContent, questionAuthor, questionCategory, questionTags, questionVisits, questionVotes){
+        var title = $('<a href="#">').append($('<h4 question-id="' + questionID + '">').attr('class', 'small-question-title').text(questionTitle));
         var content = $('<span>').attr('class', 'small-question-content').text(questionContent);
         var author = $('<span>').attr('class', 'small-question-author').text(questionAuthor);
         var category = $('<span>').attr('class', 'small-question-category').text(questionCategory);
@@ -19,8 +19,20 @@ var questionView = (function () {
         return question;
     }
 
+    function visualizeLargeQuestionWithAnswers(questionTitle, questionContent, questionAuthor) {
+        var title = $('<h3>').attr('class', 'large-question-title').text(questionTitle);
+        var content = $('<span>').attr('class', 'large-question-content').text(questionContent);
+        var author = $('<span>').attr('class', 'large-question-author').text(questionAuthor);
+
+        var question = $('<tr>')
+            .append($('<td>').append(author))
+            .append($('<td>').append(title))
+            .append($('<td>').append(content));
+        return question;
+    }
 
     return {
-        visualizeSmallQuestion: visualizeSmallQuestion
+        visualizeSmallQuestion: visualizeSmallQuestion,
+        visualizeLargeQuestionWithAnswers: visualizeLargeQuestionWithAnswers
     }
 })();

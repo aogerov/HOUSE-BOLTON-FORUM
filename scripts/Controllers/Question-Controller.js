@@ -1,6 +1,8 @@
 var questionController = (function () {
+
     function getAndVisualizeLastNQuestions(n) {
         var mainSection = $('main');
+
         mainSection.text('');
         mainSection.append($('<table id="questions">'));
         var questionsTable = $('#questions');
@@ -16,26 +18,45 @@ var questionController = (function () {
                 var questionAuthor;
                 var questionCategory = "IMPLEMENTING";
                 var questionTags = "some tags";
-//                $.ajaxSetup({async: false});
-                UserModule.getUserById(question.createdBy).success(function (data) {
-                    console.log(data.results.username);
-//                    questionAuthor = data.results.username;
-                }).error(function (err) {
-                    console.log(err);
-                    questionAuthor = "ERROR";
-                });
-//                $.ajaxSetup({async: true});
-
+                $.ajaxSetup({async: false});
+                var responseJSONUser = UserModule.getUserById(question.createdBy.objectId).responseJSON;
+                questionAuthor = responseJSONUser.username;
+                $.ajaxSetup({async: true});
                 var questionVisits = question.visits;
                 var questionVotes = question.votes;
 
-                questionsTable.append(questionView.visualizeSmallQuestion(questionTitle, questionContent, questionAuthor, questionCategory, questionTags, questionVisits, questionVotes));
+                questionsTable.append(questionView.visualizeSmallQuestion(question.objectId, questionTitle, questionContent, questionAuthor, questionCategory, questionTags, questionVisits, questionVotes));
+            });
+
+            $('.small-question-title').click(function () {
+                getAndVisualiseQuestionByID($(this).attr('question-id'));
             })
         }).error(function (err) {
             console.log(err);
         });
     }
 
+    function getAndVisualiseQuestionByID(questionID) {
+        var mainSection = $('main');
+
+        mainSection.text('');
+        mainSection.append($('<table id="question">'));
+        var questionPromise = questionsModule.getQuestionByID(questionID);
+        questionPromise.success(function (data) {
+            var question = data;
+            var questionTitle = question.title;
+            var questionContent = question.content;
+            var questionAuthor;
+            $.ajaxSetup({async: false});
+            var responseJSONUser = UserModule.getUserById(question.createdBy.objectId).responseJSON;
+            questionAuthor = responseJSONUser.username;
+            $.ajaxSetup({async: true});
+
+            $('#question').append(questionView.visualizeLargeQuestionWithAnswers(questionTitle, questionContent, questionAuthor))
+        }).error(function (err) {
+            console.log(err);
+        });
+    }
     return {
         getAndVisualizeLastNQuestions: getAndVisualizeLastNQuestions
     }
