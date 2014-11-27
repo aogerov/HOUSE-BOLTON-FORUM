@@ -1,0 +1,14 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+.small-question {
+    border: 1px solid black;
+    list-style-type: none;
+    display: block;
+}
+.small-question>li {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-right: 10px;
+}

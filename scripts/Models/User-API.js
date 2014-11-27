@@ -48,12 +48,7 @@ var UserModule = (function () {
             },
             url: "https://api.parse.com/1/users/" + encodeURI(userId),
             contentType: 'application/json',
-            dataType: 'json',
-        }).error(function () {
-            alert('Cannot get user with that ID.');
-        }).success(function (data) {
-            // alert('Successfully got user by ID.');
-            // console.log(data);
+            dataType: 'json'
         });
     }
     

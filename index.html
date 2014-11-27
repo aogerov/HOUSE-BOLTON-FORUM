@@ -3,29 +3,38 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>House Bolton Forum</title>
+    <link rel="stylesheet" href="styles/questionStyles.css"/>
     <script src="libs/jquery-2.1.1.min.js"></script>
     <script src="scripts/globalConstants.js"></script>
+    <!--<MODELS>-->
     <script src="scripts/Models/Questions-API.js"></script>
 	<script src="scripts/Models/Answers-API.js"></script>
 	<script src="scripts/Models/Categories-API.js"></script>
 	<script src="scripts/Models/QuestionTagRelation-API.js"></script>
 	<script src="scripts/Models/Tags-API.js"></script>
+    <script src="scripts/Models/User-API.js"></script>
+    <!--</MODELS>-->
+
+    <!--<CONTROLLERS>-->
+    <script src="scripts/Controllers/Question-Controller.js"></script>
+    <!--</CONTROLLERS>-->
+
+    <!--<VIEWS>-->
 	<script src="scripts/Views/Answer-View.js"></script>
     <script src="scripts/Views/Question-View.js"></script>
 	<script src="scripts/Views/Tag-View.js"></script>
 	<script src="scripts/Views/Categories-View.js"></script>
+    <!--</VIEWS>-->
 </head>
 <body>
-<div>
-    <ul id="questions">
-    </ul>
-</div>
+<main>
+
+</main>
 	<h2>Tags</h2>
 	<div id="tags">
 	</div>
 <script>
-//	TagView.visualize();
-    $('#questions').append(questionView.visualizeSmallQuestion("Title1", "conteeeent", "Reath", "spam", "tag", "5", "2"));
+questionController.getAndVisualizeLastNQuestions(NUMBER_OF_LAST_QUESTIONS_DEFAULT);
 </script>
 </body>
 </html>

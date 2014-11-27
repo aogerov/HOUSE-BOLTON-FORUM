@@ -1,20 +1,20 @@
 var questionView = (function () {
     function visualizeSmallQuestion(questionTitle, questionContent, questionAuthor, questionCategory, questionTags, questionVisits, questionVotes){
-        var title = $('<h4 class="small-question-title">').text(questionTitle);
-        var content = $('<p class="small-question-content">').text(questionContent);
-        var author = $('<span class="small-question-author">').text(questionAuthor);
-        var category = $('<span class="small-question-category">').text(questionCategory);
-        var tags = $('<span class="small-question-tags">').text(questionTags);
-        var visits = $('<span class="small-question-visits">').text(questionVisits);
-        var votes = $('<span class="small-question-votes">').text(questionVotes);
+        var title = $('<h4>').attr('class', 'small-question-title').text(questionTitle);
+        var content = $('<span>').attr('class', 'small-question-content').text(questionContent);
+        var author = $('<span>').attr('class', 'small-question-author').text(questionAuthor);
+        var category = $('<span>').attr('class', 'small-question-category').text(questionCategory);
+        var tags = $('<span>').attr('class', 'small-question-tags').text(questionTags);
+        var visits = $('<span>').attr('class', 'small-question-visits').text(questionVisits);
+        var votes = $('<span>').attr('class', 'small-question-votes').text(questionVotes);
 
         var question = $('<ul class="small-question">')
-            .append($('<li>').text(title))
-            .append($('<li>').text(content))
-            .append($('<li>').text(author))
-            .append($('<li>').text(category))
-            .append($('<li>').text(visits))
-            .append($('<li>').text(votes));
+            .append($('<li>').append(title))
+            .append($('<li>').append(content))
+            .append($('<li>').append(author))
+            .append($('<li>').append(category))
+            .append($('<li>').append(visits))
+            .append($('<li>').append(votes));
         return question;
     }
 
