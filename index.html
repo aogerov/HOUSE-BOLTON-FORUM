@@ -5,14 +5,14 @@
     <title>House Bolton Forum</title>
     <script src="libs/jquery-2.1.1.min.js"></script>
     <script src="scripts/globalConstants.js"></script>
-    <script src="scripts/Questions-API.js"></script>
-	<script src="scripts/Answers-API.js"></script>
-	<script src="scripts/Categories-API.js"></script>
-	<script src="scripts/QuestionTagRelation-API.js"></script>
-	<script src="scripts/Tags-API.js"></script>
-	<script src="scripts/Question-Answer-View.js"></script>
-	<script src="scripts/Tag-View.js"></script>
-	<script src="scripts/Categories-View.js"></script>
+    <script src="scripts/Models/Questions-API.js"></script>
+	<script src="scripts/Models/Answers-API.js"></script>
+	<script src="scripts/Models/Categories-API.js"></script>
+	<script src="scripts/Models/QuestionTagRelation-API.js"></script>
+	<script src="scripts/Models/Tags-API.js"></script>
+	<script src="scripts/Views/Answer-View.js"></script>
+	<script src="scripts/Views/Tag-View.js"></script>
+	<script src="scripts/Views/Categories-View.js"></script>
 </head>
 <body>
 <div>
@@ -23,21 +23,8 @@
 	<div id="tags">
 	</div>
 <script>
-//    questionsModule.getAllQuestions();
-//    questionsModule.searchQuestionsByTitle("1");
-//    questionsModule.getAllQuestionsFromCategory("YjyaYWrWaj");
-//    questionsModule.getAllQuestionsFromUser("i2Mq1WP3sN");
-//    answersModule.getAllAnswersFromQuestion("AInXFgojkL");
-//    questionsModule.addQuestion("Topic added from API", "Looooorem Iiiipsum", "i2Mq1WP3sN", "Q3V1RqV0JD", "some tags");
-//	categoriesModule.getAllCategories();
-// categoriesModule.addCategory("Testing adding category");
-// categoriesModule.deleteCategory('jHDyeu2oYf');
 	CategoryView.visualizeCategories();
 	TagView.visualize();
-//    var questions = questionsModule.getQuestionByID("4P8lhE2jvx");
-//    questions.success(function (data) {
-//        console.log(data);
-//    })
 </script>
 </body>
 </html>
