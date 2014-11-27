@@ -13,24 +13,10 @@ var questionView = (function () {
             .append($('<li>').append(content))
             .append($('<li>').append(author))
             .append($('<li>').append(category))
+            .append($('<li>').append(tags))
             .append($('<li>').append(visits))
             .append($('<li>').append(votes));
         return question;
-    }
-
-    function visualizeQuestions(data){
-        var question = data;
-        var questionsList = $("#questions");
-        var questionTitle = $("<h4>").text(question.title),
-            questionContent = $("<div>").text(question.content),
-            questionElement = $("<li>")
-                .attr("data-id",question.objectId)
-                .attr("data-type","question")
-                .append(questionTitle)
-                .append(questionContent)
-                .appendTo(questionsList);
-      //  answerView(question.objectId);
-
     }
 
 
