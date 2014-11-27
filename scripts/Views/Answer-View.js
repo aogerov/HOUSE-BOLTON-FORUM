@@ -46,7 +46,6 @@ var QuestionAnswerView = (function(){
 	}
 	
 	return {
-		visualize: visualize,
         answerView: answerView
 	}
 })();
