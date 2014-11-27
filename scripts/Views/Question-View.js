@@ -8,14 +8,14 @@ var questionView = (function () {
         var visits = $('<span>').attr('class', 'small-question-visits').text(questionVisits);
         var votes = $('<span>').attr('class', 'small-question-votes').text(questionVotes);
 
-        var question = $('<ul class="small-question">')
-            .append($('<li>').append(title))
-            .append($('<li>').append(content))
-            .append($('<li>').append(author))
-            .append($('<li>').append(category))
-            .append($('<li>').append(tags))
-            .append($('<li>').append(visits))
-            .append($('<li>').append(votes));
+        var question = $('<tr class="small-question">')
+            .append($('<td>').append(title))
+            .append($('<td>').append(content))
+            .append($('<td>').append(author))
+            .append($('<td>').append(category))
+            .append($('<td>').append(tags))
+            .append($('<td>').append(visits))
+            .append($('<td>').append(votes));
         return question;
     }
 

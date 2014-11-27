@@ -2,13 +2,9 @@
     padding: 0;
     margin: 0;
 }
-.small-question {
-    list-style-type: none;
-    display: block;
+#questions td {
+    text-align: center;
 }
-.small-question>li {
-    border: 1px solid black;
-    display: inline-block;
-    padding: 5px 10px;
-    margin-right: 10px;
+#questions td, #questions th {
+    padding-right: 10px;
 }
