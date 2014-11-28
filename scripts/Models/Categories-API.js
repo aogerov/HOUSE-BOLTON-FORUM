@@ -12,7 +12,7 @@ var CategoriesModule = (function() {
 
 	function addCategory(name) {
 		return $.ajax({
-			type: "POST",
+			method: "POST",
 			headers: {
 				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
 				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
@@ -24,34 +24,26 @@ var CategoriesModule = (function() {
 		});
 	}
 
-	function categoryAdded(data) {
-		alert('Category successfully created!')
-	}
-
-	function handleCategoryAddError(error) {
-		console.log('Could not add new category: ' + error);
-		throw new Error("Could not add new category");
-	}
-
+    function getCategoryByID(categoryID) {
+        return $.ajax({
+            method: "GET",
+            headers: {
+                "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+                "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+            },
+            url: "https://api.parse.com/1/classes/Category/" + categoryID
+        });
+    }
+    
 	function deleteCategory(categoryId) {
 		return $.ajax({
-			type: "DELETE",
+			method: "DELETE",
 			headers: {
 				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
 				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 			},
 			url: "https://api.parse.com/1/classes/Category/" + categoryId
 		});
-	}
-
-	function categoryDeleted(data) {
-		alert("Category successfully deleted!");
-		console.log(data);
-	}
-
-	function handleCategoryDeleteError(err) {
-		console.log("Could not delete category!\n" + err);
-		throw new Error("Could not delete category");
 	}
 
 	function checkIfCategoryExits(categoryId) {
@@ -74,6 +66,7 @@ var CategoriesModule = (function() {
 		getAllCategories: getAllCategories,
 		addCategory: addCategory,
 		deleteCategory: deleteCategory,
-		checkIfCategoryExits: checkIfCategoryExits
+		checkIfCategoryExits: checkIfCategoryExits,
+		getCategoryByID: getCategoryByID
 	}
 })();
