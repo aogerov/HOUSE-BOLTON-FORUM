@@ -1,6 +1,6 @@
 var questionView = (function () {
     function visualizeSmallQuestion(questionID, questionTitle, questionContent, questionAuthor, questionCategory, questionTags, questionVisits, questionVotes){
-        var title = $('<a href="#">').append($('<h4 data-id="' + questionID + '">').attr('class', 'small-question-title').text(questionTitle));
+        var title = $('<a href="#/view-question/'+ questionID + '">').append($('<h4 data-id="' + questionID + '">').attr('class', 'small-question-title').text(questionTitle));
         var content = $('<span>').attr('class', 'small-question-content').text(questionContent);
         var author = $('<span>').attr('class', 'small-question-author').text(questionAuthor);
         var category = $('<span>').attr('class', 'small-question-category').text(questionCategory);

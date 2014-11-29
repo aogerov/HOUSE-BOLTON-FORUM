@@ -1,10 +1,11 @@
 var questionController = (function () {
 
-    function addEventHandlerForTitleClick(element) {
-        element.click(function () {
-            getAndVisualiseQuestionByID($(element).attr('data-id'));
-        });
-    }
+
+//    function addEventHandlerForTitleClick(element) {
+//        element.click(function () {
+//            getAndVisualiseQuestionByID($(element).attr('data-id'));
+//        });
+//    }
 
     function getAndVisualizeLastNQuestions(n) {
         var mainSection = $('main');
@@ -30,7 +31,7 @@ var questionController = (function () {
 
                     var questionHTML = questionView.visualizeSmallQuestion(question.objectId, questionTitle, questionContent, questionAuthor, questionCategory, questionTags, questionVisits, questionVotes);
                     var questionTitleHTML = $(questionHTML).find('.small-question-title');
-                    addEventHandlerForTitleClick(questionTitleHTML);
+//                    addEventHandlerForTitleClick(questionTitleHTML);
                     questionsTable.append(questionHTML);
                 })
             });
@@ -39,7 +40,7 @@ var questionController = (function () {
         });
     }
 
-    function getAndVisualiseQuestionByID(questionID) {
+    function getAndVisualizeQuestionByID(questionID) {
         var mainSection = $('main');
 
         mainSection.text('');
@@ -61,6 +62,7 @@ var questionController = (function () {
         });
     }
     return {
-        getAndVisualizeLastNQuestions: getAndVisualizeLastNQuestions
+        getAndVisualizeLastNQuestions: getAndVisualizeLastNQuestions,
+        getAndVisualizeQuestionByID: getAndVisualizeQuestionByID
     }
 })();
