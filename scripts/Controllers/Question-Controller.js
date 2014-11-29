@@ -1,5 +1,11 @@
 var questionController = (function () {
 
+    function addEventHandlerForTitleClick(element) {
+        element.click(function () {
+            getAndVisualiseQuestionByID($(element).attr('data-id'));
+        });
+    }
+
     function getAndVisualizeLastNQuestions(n) {
         var mainSection = $('main');
 
@@ -13,23 +19,21 @@ var questionController = (function () {
             var questions = data.results;
 
             $.each(questions, function (_, question) {
-                var questionTitle = question.title;
-                var questionContent = question.content.substr(0, CHARACTERS_TO_BE_DISPLAYED_AT_SMALL_QUESTIONS) + "...";
-                var questionAuthor;
-                var questionCategory = "IMPLEMENTING";
-                var questionTags = "some tags";
-				UserModule.getUserById(question.createdBy.objectId).success(function (userData){
-				questionAuthor = userData.username;
-				var questionVisits = question.visits;
-                var questionVotes = question.votes;
-                questionsTable.append(questionView.visualizeSmallQuestion(question.objectId, questionTitle, questionContent, questionAuthor, questionCategory, questionTags, questionVisits, questionVotes));
-				})
+                $.when(UserModule.getUserById(question.createdBy.objectId), CategoriesModule.getCategoryByID(question.category.objectId)).done(function (userData, categoryData) {
+                    var questionTitle = question.title;
+                    var questionContent = question.content.substr(0, CHARACTERS_TO_BE_DISPLAYED_AT_SMALL_QUESTIONS) + "...";
+                    var questionAuthor = userData[0].username;
+                    var questionCategory = categoryData[0].name;
+                    var questionTags = "some tags";
+                    var questionVisits = question.visits;
+                    var questionVotes = question.votes;
 
+                    var questionHTML = questionView.visualizeSmallQuestion(question.objectId, questionTitle, questionContent, questionAuthor, questionCategory, questionTags, questionVisits, questionVotes);
+                    var questionTitleHTML = $(questionHTML).find('.small-question-title');
+                    addEventHandlerForTitleClick(questionTitleHTML);
+                    questionsTable.append(questionHTML);
+                })
             });
-
-            $('.small-question-title').click(function () {
-                getAndVisualiseQuestionByID($(this).attr('question-id'));
-            })
         }).error(function (err) {
             console.log(err);
         });
