@@ -19,6 +19,7 @@
     <!--<CONTROLLERS>-->
     <script src="scripts/Controllers/Question-Controller.js"></script>
     <script src="scripts/Controllers/Sammy-Controller.js"></script>
+	<script src="scripts/Controllers/Tag-Controller.js"></script>
     <!--</CONTROLLERS>-->
 
     <!--<VIEWS>-->
@@ -34,6 +35,8 @@
 </main>
 <script>
 questionController.getAndVisualizeLastNQuestions(NUMBER_OF_LAST_QUESTIONS_DEFAULT);
+TagsController.getAndVisualizeTags();
+console.log(TagsController.checkIfTagExitsByName("example"));
 </script>
 </body>
 </html>

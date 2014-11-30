@@ -18,8 +18,8 @@ var tagModule = (function() {
 		return $.ajax({
 			type: "POST",
 			headers: {
-				"X-Parse-Application-Id": PARSE_APP_ID,
-				"X-Parse-REST-API-Key": PARSE_REST_API_KEY
+				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+                "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 			},
 			url: "https://api.parse.com/1/classes/Tag",
 			data: JSON.stringify(tag),
@@ -33,8 +33,8 @@ var tagModule = (function() {
 		return $.ajax({
 			method: "DELETE",
 			headers: {
-				"X-Parse-Application-Id": PARSE_APP_ID,
-				"X-Parse-REST-API-Key": PARSE_REST_API_KEY
+				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+                "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 			},
 			url: "https://api.parse.com/1/classes/Tag/" + tagID
 		});
@@ -44,8 +44,8 @@ var tagModule = (function() {
 		return $.ajax({
 				method: "GET",
 				headers: {
-					"X-Parse-Application-Id": PARSE_APP_ID,
-					"X-Parse-REST-API-Key": PARSE_REST_API_KEY
+					"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+                "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 				},
 				url: 'https://api.parse.com/1/classes/Tag?where={"name":"' + name +'"}',
 			});
@@ -55,12 +55,27 @@ var tagModule = (function() {
 		return $.ajax({
 				method: "GET",
 				headers: {
-					"X-Parse-Application-Id": PARSE_APP_ID,
-					"X-Parse-REST-API-Key": PARSE_REST_API_KEY
+					"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+                "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 				},
 				url: 'https://api.parse.com/1/classes/Tag?where={"objectId":"' + tagId +'"}',
 			});
 
+	}
+	
+	function editTag(tagId, content) {
+		return $.ajax({
+				method: "PUT",
+				headers: {
+					"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+					"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+				},
+				url: "https://api.parse.com/1/classes/Tag/" + tagId,
+				data: JSON.stringify(
+					{"visited": content}
+				),
+				contentType: "application/json"
+			});
 	}
 	
 	return {
@@ -68,7 +83,8 @@ var tagModule = (function() {
 		addTag: addTag,
 		deleteTag: deleteTag,
 		getTagByName: getTagByName,
-		getTagById: getTagById
+		getTagById: getTagById,
+		editTag: editTag
 		
 	}
 })();
