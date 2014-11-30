@@ -16,10 +16,14 @@ var TagsController =(function() {
 				var countQuestion = countQuestionWithTag.success(function(data) {
 					count = data.results.length;
 					var editTagSize = tagModule.editTag(tag.objectId, count);
-					editTagSize.success(function() {
+					editTagSize.success(function(data2) {
+					
 						var number = tag.visited;
-						$('.tag-event').css({"font-size": 16 + number + "px"});
-						console.log(tag.visited);
+						var tagId = tag.objectId;
+						console.log(tagId);
+						$('#'+tagId).css({"font-size": 16 + number + "px"});
+						
+						
 					})
 
 				})

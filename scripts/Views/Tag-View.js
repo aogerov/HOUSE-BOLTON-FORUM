@@ -1,7 +1,10 @@
 var TagView = (function() {
 	
 	function visualizeTags(tag) {
-		var tag = $('<a href = #>').attr('class', 'tag-event').text(tag.name);
+		var tag = $('<a href = #>')
+			.attr('class', 'tag-event')
+			.attr('id',tag.objectId)
+			.text(tag.name);
 			tag.attr("data-id", tag.objectId);
 			tag.data('tag', tag);
 			tag.css({"margin" : "5px"});
