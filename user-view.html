@@ -3,36 +3,39 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <title>register/Log-in Form</title>
     <link href="styles/registrationForm.css" rel="stylesheet" />
-    <script src="scripts/globalConstants.js"></script>
-</head>
-<body>
-    <div id="parentContainer"></div>
+    <link href="styles/userProfile.css" rel="stylesheet" />
 
+    <script src="scripts/globalConstants.js"></script>
     <script src="libs/jquery-2.1.1.js"></script>
+    <script src="libs/sammy.js"></script>
+
     <script src="scripts/Models/User-API.js"></script>
     <script src="scripts/Controllers/User-Controller.js"></script>
     <script src="scripts/Views/User-View.js"></script>
-    
+    <script src="scripts/Controllers/Sammy-Controller.js"></script>
+    <title>register/Log-in Form</title>
+</head>
+<body>
+    <main>
+
+        <p>Users:</p>
+        <a href="#/user/qZ047wDesX" data-userid="qZ047wDesX">Icakis</a><br />
+        <a href="#/user/geRiBmu9gz" data-userid="geRiBmu9gz">tsvety</a><br />
+        <a href="#/user/i2Mq1WP3sN" data-userid="i2Mq1WP3sN">reath</a><br />
+        <a href="#/user/nVL0pIZKSt" data-userid="nVL0pIZKSt">f1mp3r</a><br />
+        <a href="#/user/8KdAFGIdx1" data-userid="8KdAFGIdx1">Minka</a><br />
+        <a href="#/user/lBfKbuMd7r" data-userid="lBfKbuMd7r">Ivan</a><br />
+
+        <div id="parentContainer"></div>
+
+
+    </main>
+
+
     <script>
         var reg = UserView.registerView($('#parentContainer')[0]);
         var log = UserView.loginView($('#parentContainer')[0]);
-        //var logUser = new UserModule.login('Icakis', '123');
-        //logUser.success(
-        //     function (data) {
-        //         console.log(data.sessionToken);
-        //         var editData = new UserModule.editData('qZ047wDesX', data.sessionToken, 'email', 'Icakis_87@abv.bg');
-        //         var editData2 = new UserModule.editData('qZ047wDesX', data.sessionToken, 'ranking', 55);
-        //     });
-
-
-        //var removeReg = new UserView.RemoveregisterView();
-        //var removeLog = new UserView.RemoveloginView();
-
-        //var gottenUserById = new UserModule.getUserById('qZ047wDesX').success(function (data) {
-        //    console.log(data);
-        //});
     </script>
 </body>
 </html>

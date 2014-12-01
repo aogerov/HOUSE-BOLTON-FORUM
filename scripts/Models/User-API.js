@@ -48,11 +48,16 @@ var UserModule = (function () {
             },
             url: "https://api.parse.com/1/users/" + encodeURI(userId),
             contentType: 'application/json',
-            dataType: 'json'
+            dataType: 'json',
+        }).error(function () {
+            alert('Cannot get user with that ID.');
+        }).success(function (data) {
+            // alert('Successfully got user by ID.');
+            // console.log(data);
         });
     }
     
-    function editData(userId, sessionToken, columnToChange, newContent) {
+    function editUserColumn(userId, sessionToken, columnToChange, newContent) {
         return $.ajax({
             method: "PUT",
             beforeSend: function (request) {
@@ -62,6 +67,20 @@ var UserModule = (function () {
             },
             
             data: JSON.stringify(newContent),
+            contentType: 'application/json',
+            url: "https://api.parse.com/1/users/" + userId
+        });
+    }
+    
+    function editUser(userId, sessionToken, newUserSettings) {
+        return $.ajax({
+            method: "PUT",
+            beforeSend: function (request) {
+                request.setRequestHeader('X-Parse-Application-Id', parseConstants.PARSE_APPLICATION_ID);
+                request.setRequestHeader('X-Parse-REST-API-Key', parseConstants.PARSE_REST_API_KEY);
+                request.setRequestHeader('X-Parse-Session-Token', sessionToken);
+            },
+            data: JSON.stringify(newUserSettings),
             contentType: 'application/json',
             url: "https://api.parse.com/1/users/" + userId
         });
@@ -140,15 +159,29 @@ var UserModule = (function () {
         });
     }
     
+    function retrievingCurrentUser(sessionToken) {
+        return $.ajax({
+            method: "GET",
+            beforeSend: function (request) {
+                request.setRequestHeader('X-Parse-Application-Id', parseConstants.PARSE_APPLICATION_ID);
+                request.setRequestHeader('X-Parse-REST-API-Key', parseConstants.PARSE_REST_API_KEY);
+                request.setRequestHeader('X-Parse-Session-Token', sessionToken);
+            },
+            url: "https://api.parse.com/1/users/me"
+        });
+    }
+    
     return {
         login: login,
         getUserById: getUserById,
         getUserByUserName: getUserByUserName,
         getRoleByUserId : getRoleByUserId,
         addToDatabase: addUserToDatabase,
-        editData: editData,
+        editUserColumn: editUserColumn,
+        editUser: editUser,
         getDefaultSettings: getDefaultSettings,
         uploadNewFile: uploadNewFile,
-        deleteUploadedFile: deleteUploadedFile
+        deleteUploadedFile: deleteUploadedFile,
+        retrievingCurrentUser: retrievingCurrentUser
     };
 }());

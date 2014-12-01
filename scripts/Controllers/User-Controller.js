@@ -5,24 +5,27 @@
         
         return UserModule.getUserByUserName(username).success(function (data) {
             if (data.results.length !== 0) {
+                alert('User already exist with that username.');
                 throw new Error('User already exist with that username.');
             }
             
-            return UserModule.addToDatabase(username, email, pass1).error(function () {
-                alert('Cannot create new user.');
-                throw new Error('Cannot create new user');
-            }).success(function (dbData) {
-                // returns new user's session token
-                // console.log(dbData);
+            // add new user to DB.
+            return UserModule.addToDatabase(username, email, pass1).success(function (dbData) {
                 alert('Successfully registered!');
                 
-                // set dedautl user avatar:
+                // set default user avatar:
                 UserModule.getDefaultSettings().success(function (defaultData) {
-                    // console.log(defaultData.defaultAvatar);
-                    UserController.editUserData(dbData.objectId, dbData.sessionToken, 'avatar', defaultData.defaultAvatar);
+                    UserController.editUserSingleColumn(dbData.objectId, dbData.sessionToken, 'avatar', defaultData.defaultAvatar);
                 });
+                
+                // sign-in registered user:
+                UserController.loginUser(username, pass1);
+            }).error(function () {
+                alert('Cannot create new user. Try again.');
+                throw new Error('Cannot create new user. Try again.');
             });
         }).error(function () {
+            alert('Cannot connect to DB.');
             throw new Error('Cannot connect to DB.');
         });
     }
@@ -45,6 +48,15 @@
         }
     }
     
+    Storage.prototype.setObject = function setObject(key, obj) {
+        this.setItem(key, JSON.stringify(obj));
+    };
+    
+    Storage.prototype.getObject = function getObject(key) {
+        return JSON.parse(this.getItem(key));
+    };
+    
+    
     function loginUser(username, password) {
         if (!username) {
             throw new Error('Username cannot be empty');
@@ -54,14 +66,75 @@
             throw new Error('Password cannot be empty');
         }
         
-        return UserModule.login(username, password).success(function () {
+        return UserModule.login(username, password).success(function (data) {
+            UserView.removeRegisterView();
+            UserView.removeLoginView();
+            //console.log(data);
+            UserView.userProfileView(data, true);
+            if (getLoggedUser() === null) {
+                setLoggUser(data);
+            } else if (getLoggedUser().sessionToken !== data.sessionToken) {
+                setLoggUser(data);
+            }
             
+            UserView.logoutView();
+
         }).error(function () {
             
         });
     }
     
-    function editUserData(userId, sessionToken, columnToChange, newContent) {
+    function loggoutUser() {
+        if (getLoggedUser() !== null) {
+            sessionStorage.removeItem('loggedUser');
+            //sessionStorage.setObject('loggedUser',null);
+            alert('Successfuly loggout.');
+        } else {
+            alert('You was not logged-in.');
+            
+        }
+        
+        UserView.removeUserProfileView();
+        UserView.loginView();
+    }
+    
+    function getLoggedUser() {
+        return sessionStorage.getObject('loggedUser');
+    }
+    
+    function setLoggUser(user) {
+        sessionStorage.setObject('loggedUser', user);
+    }
+    
+    function isUserOwnsProfile(userId) {
+        UserModule.getUserById(userId).success(function (user) {
+            if (!getLoggedUser()) {
+                UserView.userProfileView(user, false);
+            } else {
+                var loggedUserToken = getLoggedUser().sessionToken;
+                UserModule.retrievingCurrentUser(loggedUserToken)
+                    .success(function (loggedUser) {
+                    if (loggedUser.username !== user.username) {
+                        UserView.userProfileView(user, false);
+                    } else if (getLoggedUser().sessionToken !== loggedUserToken) {
+                        alert('expired session.');
+                        UserView.userProfileView(user, false);
+                    } else {
+                        UserView.userProfileView(user, true);
+                    }
+                })
+                    .error(function () {
+                    alert('Cannot connect to DB. Try again.');
+                    UserView.userProfileView(user, false);
+                });
+            }
+        }).error(function () {
+            alert('Not existing user.');
+        });
+
+    }
+    
+    function editUserSingleColumn(userId, sessionToken, columnToChange, newContent) {
         if (columnToChange.toString().toLowerCase() === 'username') {
             throw new Error('Username cannot be changed');
         }
@@ -83,8 +156,49 @@
             }
         }
         
-        return UserModule.editData(userId, sessionToken, columnToChange, newContent).error(function () {
+        return UserModule.editUserColumn(userId, sessionToken, columnToChange, newContent).error(function () {
             throw new Error('Cannot edit user data: ' + columnToChange);
+        });
+    }
+    
+    function editUser(userId, sessionToken, username, email, password, avatar) {
+        UserModule.retrievingCurrentUser(sessionToken).success(function (oldUser) {
+            var editedUser = {};
+            if (oldUser.email.toLowerCase() !== email.toLocaleLowerCase()) {
+                editUser[email] = email;
+            }
+            
+            if (oldUser.password !== password) {
+                editUser[password] = password;
+            }
+            
+            
+            if (oldUser.avatar.url !== avatar.url) {
+                editUser[avatar] = avatar;
+            }
+            
+            
+            if (oldUser.username != username) {
+                UserModule.getUserByUserName(username).success(function (existingUsername) {
+                    if (existingUsername.results.length != 0) {
+                        throw new Error('Username already exists.');
+                    } else {
+                        UserModule.editUser(editedUser);
+                    }
+                }).error(function () {
+                    alert('Cannot edit username.');
+                    throw new Error('Cannot edit username.');
+                });
+            }
+            
+            UserModule.editUser(editedUser).success(function () {
+                alert('All data was saved.');
+            }).error(function () {
+                throw new Error('Cannot save new settings.');
+            });
+
+        }).error(function () {
+            throw new Error('Invalid user ID.');
         });
     }
     
@@ -99,7 +213,10 @@
     return {
         registerUser: registerUser,
         loginUser: loginUser,
-        editUserData: editUserData,
+        loggoutUser: loggoutUser,
+        isUserOwnsProfile: isUserOwnsProfile,
+        editUserSingleColumn: editUserSingleColumn,
+        editUser: editUser,
         getDefaultUser: getDefaultUser,
         uploadFile: uploadFile,
     }

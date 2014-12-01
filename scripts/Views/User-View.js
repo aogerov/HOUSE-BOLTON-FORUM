@@ -3,7 +3,9 @@
         // check if register container exists in DOM
         var existingRegisterContainer = $('#registerSection');
         if (existingRegisterContainer.length == 0) {
-            var registerContainer = $('<div>').attr('id', 'registerSection').appendTo(parentContainer);
+            var registerContainer = $('<div>')
+                .attr('id', 'registerSection')
+                .appendTo(parentContainer);
             $('<label>')
                 .text('register:')
                 .attr('id', 'registerLabel')
@@ -40,30 +42,9 @@
                 .click('click', reg);
             
             function reg() {
-                try {
-                    UserController.registerUser($('#userNameInput').val(), $('#emailInput').val(), $('#password1Input').val(), $('#password2Input').val())
-                    .success(function (data) {
-                        //console.log('NEW USER:');
-                        console.log(data);
-                        loginAfterRegistration($('#userNameInput').val(), $('#password1Input').val());
-                        removeRegisterView();
-                        removeLoginView();
-                    });
-                } catch (e) {
-                    console.log('Error: ' + e.message);
-                }
+                // cannot catch thronw errors ?!
+                UserController.registerUser($('#userNameInput').val(), $('#emailInput').val(), $('#password1Input').val(), $('#password2Input').val());
             }
-            function loginAfterRegistration(username, password) {
-                var sameParentContainer = parentContainer;
-                UserController.loginUser(username, password).error(function () {
-                    removeRegisterView();
-                    loginView(parentContainer);
-                    throw new Error('Cannot login. Try again..');
-                }).success(function(data) {
-                    userProfileView(sameParentContainer, data);
-                });
-            }
-
         }
     }
     
@@ -77,6 +58,10 @@
     
     function loginView(parentContainer) {
         // check if login container exists in DOM
+        if (!parentContainer) {
+            parentContainer = $('#parentContainer');
+        }
+
         var existingLoginContainer = $('#loginSection');
         if (existingLoginContainer.length == 0) {
             var loginContainer = $('<div>')
@@ -111,23 +96,12 @@
         }
         
         function login() {
-            var sameParentContainer = parentContainer;
             UserController.loginUser($('#userNameLoginInput').val(), $('#passwordLoginInput').val())
             .error(function () {
                 $('#loginMessageLabel').text('Cannot login with this username and password.').css('color', 'red').css('display', 'inline-block').fadeOut(5000);
-            }).success(function (data) {
-                $('#loginMessageLabel').text('Successfully logged-in!').css('color', 'greenyellow').css('display', 'inline-block').fadeOut(2000);
-                removeRegisterView();
-                removeLoginView();
-                userProfileView(sameParentContainer, data);
-                
-                // TODO: DELETE NOT SAVED IMAGE (if it's not default)
-                //if (data.avatar.url !== $('#imageProfileLabel').attr('data-[filename]')) {
-                
-                //}
-                
-                // returns new user's session token
-                //console.log(data);
+            })
+            .success(function () {
+                $('#loginMessageLabel').text('Successfully logged-in!').css('color', 'greenyellow').css('display', 'inline-block').fadeOut(2000);;
             });;;
         }
     }
@@ -140,19 +114,29 @@
         }
     }
     
-    function userProfileView(parentContainer, user) {
+    function userProfileView(user, isYours) {
+        var parentContainer = $('#parentContainer');
         var existingUserProfileContainer = $('#userProfileSection');
-        if (existingUserProfileContainer.length == 0) {
+        existingUserProfileContainer.remove();
+        //console.log(isYours);
+
+        //if (existingUserProfileContainer.length == 0) {
             var userProfileContainer = $('<div>')
                 .attr('id', 'userProfileSection')
                 .appendTo(parentContainer);
+            
+            var changeTag = 'label';
+            if (isYours) {
+                changeTag = 'input';
+            }
             
             $('<label>')
                 .text('Username:')
                 .attr('id', 'userNameProfileLabel')
                 .appendTo(userProfileContainer);
-            $('<input>')
+            $('<' + changeTag + '>')
                 .attr('id', 'userNameProfileInput')
+                .text(user.username)
                 .attr('type', 'text')
                 .attr('placeholder', 'username...')
                 .attr('value', user.username)
@@ -161,19 +145,21 @@
                 .text('Email:')
                 .attr('id', 'emailProfileLabel')
                 .appendTo(userProfileContainer);
-            $('<input>')
+            $('<' + changeTag + '>')
                 .attr('id', 'emailProfileInput')
+                .text(user.email)
                 .attr('type', 'email')
                 .attr('placeholder', 'email...')
                 .attr('value', user.email)
                 .appendTo(userProfileContainer);
-            var avatarImg = $('<img>')
-                .attr('id', 'imageProfileLabel')
-                .attr('alt', user.username)
-                .appendTo(userProfileContainer);
             $('<label>')
                 .text('Ranking:' + user.ranking)
                 .attr('id', 'rankingProfileLabel')
+                .appendTo(userProfileContainer);
+            
+            var avatarImg = $('<img>')
+                .attr('id', 'imageProfileLabel')
+                .attr('alt', user.username)
                 .appendTo(userProfileContainer);
             
             if (!user.avatar) {
@@ -181,37 +167,39 @@
                 // default Avatar is set on registration, but if something happened, and there is no avatar, default will be loaded again.
                 UserController.getDefaultUser().success(function (data) {
                     avatarImg
-                        .attr('src', data.defaultAvatar.url)
-                        .appendTo(userProfileContainer);
+                        .attr('src', data.defaultAvatar.url);
+                    //.appendTo(userProfileContainer);
                 }).error(function () {
                     throw Error('Cannot load (default) user avatar.');
                 });
             } else {
-                avatarImg.attr('src', user.avatar.url).appendTo(userProfileContainer);
+                avatarImg.attr('src', user.avatar.url);
             }
             
-            $('<input>')
+            if (isYours) {
+                $('<input>')
                 .attr('id', 'userProfileChangeAvatarButton')
                 .attr('type', 'file')
                 .attr('value', 'Change avatar')
                 .attr('accept', 'image/*')
                 .appendTo(userProfileContainer)
                 .click(user, changeAvatar);
-            
-            // TODO: add user role label
-            //$('<label>').text('Rank:' + userRole.name).attr('id', 'imageProfileLabel').attr('src', user.avatar).appendTo(userProfileContainer);
-            
-            $('<input>')
+                
+                // TODO: add user role label
+                //$('<label>').text('Rank:' + userRole.name).attr('id', 'imageProfileLabel').attr('src', user.avatar).appendTo(userProfileContainer);
+                
+                $('<input>')
                 .attr('id', 'saveChangesButton')
                 .attr('type', 'button')
                 .attr('value', 'Save')
                 .appendTo(userProfileContainer)
                 .click('click', saveChanges);
-            $('<label>')
+                $('<label>')
                 .text('')
                 .attr('id', 'loginMessageLabel')
                 .appendTo(userProfileContainer);
-        }
+            }
+        
         
         function changeAvatar() {
             var file;
@@ -235,9 +223,15 @@
             console.log(uploadedFile);
             //console.log(user);
             if (uploadedFile) {
-                var editedAvatar = UserController.editUserData(user.objectId, user.sessionToken, 'avatar', uploadedFile);
+                var editedAvatar = UserController.editUserSingleColumn(user.objectId, user.sessionToken, 'avatar', uploadedFile);
                 console.log(editedAvatar);
             }
+
+            //if ($('#emailProfileInput').text()!== $('#emailProfileInput').val()) {
+            //    alert('new Email');
+            //}
+
+            
         }
     }
     
@@ -249,10 +243,26 @@
         }
     }
     
+    function logoutView() {
+        var parentContainer = $('#parentContainer');
+        // check if login container exists in DOM
+        var loggoutButton = $('#loggout');
+        if (loggoutButton.length === 0) {
+            $('<button>')
+                .attr('id', 'loggout')
+                .text('Loggout')
+                .click('click', function () {
+                    UserController.loggoutUser();
+                    $(this).remove();
+            }).prependTo(parentContainer);
+        }
+    }
+    
     return {
         registerView: registerView,
         removeRegisterView: removeRegisterView,
         loginView: loginView,
+        logoutView: logoutView,
         removeLoginView: removeLoginView,
         userProfileView: userProfileView,
         removeUserProfileView: removeUserProfileView,
