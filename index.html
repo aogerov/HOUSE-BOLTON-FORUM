@@ -1,42 +1,51 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
     <title>House Bolton Forum</title>
-    <link rel="stylesheet" href="styles/questionStyles.css"/>
+    <!--<STYLES>-->
+    <link rel="stylesheet" href="styles/questionStyles.css" />
+    <link href="styles/registrationForm.css" rel="stylesheet" />
+    <link href="styles/userProfile.css" rel="stylesheet" />
+    <!--<STYLES>-->
+
     <script src="libs/jquery-2.1.1.min.js"></script>
     <script src="libs/sammy.js"></script>
     <script src="scripts/globalConstants.js"></script>
     <!--<MODELS>-->
     <script src="scripts/Models/Questions-API.js"></script>
-	<script src="scripts/Models/Answers-API.js"></script>
-	<script src="scripts/Models/Categories-API.js"></script>
-	<script src="scripts/Models/QuestionTagRelation-API.js"></script>
-	<script src="scripts/Models/Tags-API.js"></script>
+    <script src="scripts/Models/Answers-API.js"></script>
+    <script src="scripts/Models/Categories-API.js"></script>
+    <script src="scripts/Models/QuestionTagRelation-API.js"></script>
+    <script src="scripts/Models/Tags-API.js"></script>
     <script src="scripts/Models/User-API.js"></script>
     <!--</MODELS>-->
-
     <!--<CONTROLLERS>-->
     <script src="scripts/Controllers/Question-Controller.js"></script>
+    <script src="scripts/Controllers/User-Controller.js"></script>
+    <script src="scripts/Controllers/Tag-Controller.js"></script>
     <script src="scripts/Controllers/Sammy-Controller.js"></script>
-	<script src="scripts/Controllers/Tag-Controller.js"></script>
-    <!--</CONTROLLERS>-->
 
+    <!--</CONTROLLERS>-->
     <!--<VIEWS>-->
-	<script src="scripts/Views/Answer-View.js"></script>
+    <script src="scripts/Views/Answer-View.js"></script>
     <script src="scripts/Views/Question-View.js"></script>
-	<script src="scripts/Views/Tag-View.js"></script>
-	<script src="scripts/Views/Categories-View.js"></script>
+    <script src="scripts/Views/Tag-View.js"></script>
+    <script src="scripts/Views/Categories-View.js"></script>
+    <script src="scripts/Views/User-View.js"></script>
     <!--</VIEWS>-->
 </head>
 <body>
-<main>
+    <header><a href="#/">Home</a></header>
+    <main>
+        <div id="parentContainer"></div>
+    </main>
+    <script>
+        questionController.getAndVisualizeLastNQuestions(NUMBER_OF_LAST_QUESTIONS_DEFAULT);
+        TagsController.getAndVisualizeTags();
+        //console.log(TagsController.checkIfTagExitsByName("example"));
 
-</main>
-<script>
-questionController.getAndVisualizeLastNQuestions(NUMBER_OF_LAST_QUESTIONS_DEFAULT);
-TagsController.getAndVisualizeTags();
-console.log(TagsController.checkIfTagExitsByName("example"));
-</script>
+        UserController.checkIsUserLoggedIn();
+    </script>
 </body>
 </html>

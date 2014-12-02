@@ -20,7 +20,6 @@ var TagsController =(function() {
 					
 						var number = tag.visited;
 						var tagId = tag.objectId;
-						console.log(tagId);
 						$('#'+tagId).css({"font-size": 16 + number + "px"});
 						
 						

@@ -1,4 +1,5 @@
-﻿var UserController = (function () {
+﻿'use strict';
+var UserController = (function () {
     function registerUser(username, email, pass1, pass2) {
         // checks username exists
         checkPasswords(pass1, pass2);
@@ -66,64 +67,67 @@
             throw new Error('Password cannot be empty');
         }
         
-        return UserModule.login(username, password).success(function (data) {
+        return UserModule.login(username, password).success(function (loggedUser) {
             UserView.removeRegisterView();
             UserView.removeLoginView();
-            //console.log(data);
-            UserView.userProfileView(data, true);
-            if (getLoggedUser() === null) {
-                setLoggUser(data);
-            } else if (getLoggedUser().sessionToken !== data.sessionToken) {
-                setLoggUser(data);
+            //console.log(loggedUser);
+            if (getSessionLoggedUser() === null) {
+                setSessionLoggUser(loggedUser);
+            } else if (getSessionLoggedUser().sessionToken !== loggedUser.sessionToken) {
+                setSessionLoggUser(loggedUser);
             }
-            
-            UserView.logoutView();
 
-        }).error(function () {
-            
+            UserView.userProfileView(loggedUser, true);
+            // UserView.logoutView();
+            UserView.showAndHideLoginLogoutRegisterIfUserIsLogged(true, loggedUser.objectId, loggedUser.username);
         });
     }
     
     function loggoutUser() {
-        if (getLoggedUser() !== null) {
+        if (getSessionLoggedUser() !== null) {
             sessionStorage.removeItem('loggedUser');
-            //sessionStorage.setObject('loggedUser',null);
-            alert('Successfuly loggout.');
-        } else {
-            alert('You was not logged-in.');
+            UserView.showAndHideLoginLogoutRegisterIfUserIsLogged(false);
             
+            //sessionStorage.setObject('loggedUser',null);
+            UserView.removeUserProfileView();
+            alert('Successfuly loggout.');
         }
-        
-        UserView.removeUserProfileView();
-        UserView.loginView();
     }
     
-    function getLoggedUser() {
+    function getSessionLoggedUser() {
         return sessionStorage.getObject('loggedUser');
     }
     
-    function setLoggUser(user) {
+    function setSessionLoggUser(user) {
         sessionStorage.setObject('loggedUser', user);
     }
     
-    function isUserOwnsProfile(userId) {
+    function checkIsUserLoggedIn() {
+        var loggedUser = getSessionLoggedUser();
+        if (loggedUser === null) {
+            UserView.showAndHideLoginLogoutRegisterIfUserIsLogged(false);
+        } else {
+            UserView.showAndHideLoginLogoutRegisterIfUserIsLogged(true, loggedUser.objectId, loggedUser.username);
+        }
+    }
+    
+    function visualizeUserProfile(userId) {
         UserModule.getUserById(userId).success(function (user) {
-            if (!getLoggedUser()) {
+            if (!getSessionLoggedUser()) {
                 UserView.userProfileView(user, false);
             } else {
-                var loggedUserToken = getLoggedUser().sessionToken;
-                UserModule.retrievingCurrentUser(loggedUserToken)
-                    .success(function (loggedUser) {
+                var loggedUserToken = getSessionLoggedUser().sessionToken;
+                UserModule.retrievingCurrentUser(loggedUserToken).success(function (loggedUser) {
                     if (loggedUser.username !== user.username) {
                         UserView.userProfileView(user, false);
-                    } else if (getLoggedUser().sessionToken !== loggedUserToken) {
+                    } else if (getSessionLoggedUser().sessionToken !== loggedUserToken) {
                         alert('expired session.');
                         UserView.userProfileView(user, false);
                     } else {
                         UserView.userProfileView(user, true);
                     }
-                })
-                    .error(function () {
+
+                }).error(function () {
                     alert('Cannot connect to DB. Try again.');
                     UserView.userProfileView(user, false);
                 });
@@ -214,10 +218,11 @@
         registerUser: registerUser,
         loginUser: loginUser,
         loggoutUser: loggoutUser,
-        isUserOwnsProfile: isUserOwnsProfile,
+        isUserOwnsProfile: visualizeUserProfile,
         editUserSingleColumn: editUserSingleColumn,
         editUser: editUser,
         getDefaultUser: getDefaultUser,
         uploadFile: uploadFile,
+        checkIsUserLoggedIn: checkIsUserLoggedIn
     }
 }());
