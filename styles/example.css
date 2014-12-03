@@ -141,6 +141,11 @@ article {
 	font-size: 85%;
 }
 
+main h1 {
+	padding: 10px;
+	background: #fff;
+}
+
 /*
    ======== Sidebar ========== 
   */

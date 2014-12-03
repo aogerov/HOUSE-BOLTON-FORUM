@@ -8,6 +8,11 @@ $(function () {
             questionController.getAndVisualizeQuestionByID(this.params['id']);
         });
         
+        this.get('#/category/:id', function (context) {
+            categoryController.getAndVisualizeSingleCategory(this.params['id']);
+            // TODO: implement getAndVisualizeQuestionsByCategoryId()
+        });
+
         this.get('#/user/:id', function (context) {
             UserController.isUserOwnsProfile(this.params['id']);
         });
