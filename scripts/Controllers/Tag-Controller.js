@@ -1,8 +1,9 @@
 var TagsController =(function() {
 
 	function getAndVisualizeTags() {
-		$(document.body).append($('<div id="tags">'));
-		var tagsDiv = $('#tags');
+        var tagsAside = $('#tags');
+		var tagsDiv = $('<p>');
+        tagsAside.append(tagsDiv);
 		var tagsPromise = tagModule.getAllTags();
 		tagsPromise.success(function(data) {
 			var tags = data.results;
