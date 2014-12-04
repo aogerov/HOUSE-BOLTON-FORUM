@@ -1,0 +1,72 @@
+﻿body {
+}
+
+#registerLabel, #loginLabel, #userProfileSection {
+    text-align: center;
+    display: block;
+}
+
+#registerSection input, #loginSection input {
+    display: inline-block;
+    text-align: center;
+    width: 50%;
+}
+
+#registerSection, #loginSection {
+    text-align: center;
+}
+
+#userProfileSection {
+    padding-bottom: 5%;
+}
+
+#profileImageContainer {
+    width: 30%;
+    height: 30%;
+    display: inline-block;
+}
+
+#profileImage {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#userProfileChangeAvatarButton {
+    display: block;
+    width: 100%;
+}
+
+#profileInfoContainer {
+    padding-left: 3%;
+    width: 50%;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+}
+
+    #profileInfoContainer h4 {
+        margin-top: 0;
+        padding-top: 0;
+    }
+
+    #profileInfoContainer input, #profileInfoContainer label  {
+        width: 100%;
+        display: block;
+    }
+
+#personalInfoHeading, #userProfileSectionHeading {
+    margin-top: 1%;
+    margin-bottom: 3%;
+}
+
+#saveChangesButton {
+    display: block;
+    vertical-align: bottom;
+    text-align: center;
+    width: 20%;
+    margin-top: 2%;
+    margin: auto;
+    background-color: black;
+    color: white;
+}
