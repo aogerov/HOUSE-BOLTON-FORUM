@@ -131,6 +131,7 @@ var UserView = (function () {
         
         var userProfileContainer = $('<article>')
                 .attr('id', 'userProfileSection')
+				.attr('class', 'small-question')
                 .appendTo(parentContainer);
         
         $('<h2>')
@@ -263,21 +264,6 @@ var UserView = (function () {
             existingUserProfileContainer.remove();
         }
     }
-    
-    //function logoutView() {
-    //    var parentContainer = $('#parentContainer');
-    //    // check if login container exists in DOM
-    //    var loggoutButton = $('#loggout');
-    //    if (loggoutButton.length === 0) {
-    //        $('<button>')
-    //            .attr('id', 'loggout')
-    //            .text('Loggout')
-    //            .click('click', function () {
-    //            UserController.loggoutUser();
-    //            $(this).remove();
-    //        }).prependTo(parentContainer);
-    //    }
-    //}
     
     function showAndHideLoginLogoutRegisterIfUserIsLogged(isLogged, id, name) {
         var navUl = $('body header nav ul');
