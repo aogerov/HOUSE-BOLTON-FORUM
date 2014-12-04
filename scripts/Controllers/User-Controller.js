@@ -70,15 +70,14 @@ var UserController = (function () {
         return UserModule.login(username, password).success(function (loggedUser) {
             UserView.removeRegisterView();
             UserView.removeLoginView();
-            //console.log(loggedUser);
             if (getSessionLoggedUser() === null) {
                 setSessionLoggUser(loggedUser);
             } else if (getSessionLoggedUser().sessionToken !== loggedUser.sessionToken) {
                 setSessionLoggUser(loggedUser);
             }
-
-            UserView.userProfileView(loggedUser, true);
-            // UserView.logoutView();
+            
+            window.location = '#/user/' + loggedUser.objectId;
+            //UserView.userProfileView(loggedUser, true);
             UserView.showAndHideLoginLogoutRegisterIfUserIsLogged(true, loggedUser.objectId, loggedUser.username);
         });
     }
@@ -87,8 +86,6 @@ var UserController = (function () {
         if (getSessionLoggedUser() !== null) {
             sessionStorage.removeItem('loggedUser');
             UserView.showAndHideLoginLogoutRegisterIfUserIsLogged(false);
-            
-            //sessionStorage.setObject('loggedUser',null);
             UserView.removeUserProfileView();
             alert('Successfuly loggout.');
         }
@@ -139,6 +136,7 @@ var UserController = (function () {
     }
     
     function editUserSingleColumn(userId, sessionToken, columnToChange, newContent) {
+        var user = getSessionLoggedUser();
         if (columnToChange.toString().toLowerCase() === 'username') {
             throw new Error('Username cannot be changed');
         }
@@ -160,12 +158,15 @@ var UserController = (function () {
             }
         }
         
-        return UserModule.editUserColumn(userId, sessionToken, columnToChange, newContent).error(function () {
+        return UserModule.editUserColumn(user.objectId, user.sessionToken, columnToChange, newContent)
+        .error(function () {
             throw new Error('Cannot edit user data: ' + columnToChange);
         });
     }
     
     function editUser(userId, sessionToken, username, email, password, avatar) {
+        
+        
         UserModule.retrievingCurrentUser(sessionToken).success(function (oldUser) {
             var editedUser = {};
             if (oldUser.email.toLowerCase() !== email.toLocaleLowerCase()) {
