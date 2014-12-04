@@ -45,6 +45,7 @@ var AnswerView = (function(){
 			});
 
 			questionElement.append(answerList);
+			visualizeAddAnswer(questionSelector);
 		});
 		
 		promise.error(function(data){
@@ -53,7 +54,17 @@ var AnswerView = (function(){
 		});
 	}
 	
+	function visualizeAddAnswer(questionSelector){ 
+		var form = $('<form>');
+		var question = $(questionSelector);
+		var textarea = $('<textarea>');
+		var addButton = $('<a href="#">Add answer</a>'); // TODO: link
+		form.append(textarea, addButton);
+		question.append(form);
+	}
+	
 	return {
-        visualizeAllAnswers: visualizeAllAnswers
+        visualizeAllAnswers: visualizeAllAnswers,
+		visualizeAddAnswer:visualizeAddAnswer
 	}
 })();

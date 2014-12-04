@@ -47,4 +47,12 @@
     .middle-sidebar {
         width: 100%;
     }
+	
+	.mainContent > aside {
+		width:92%;
+	}
+	
+	article.large-question > form > a{
+		width: 98%;
+	}
 }
