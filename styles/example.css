@@ -178,7 +178,13 @@ aside {
 	-webkit-border-radius: 5px;	
 	color: #fff;	
 }
-
+aside p {
+	padding: 5px;
+}
+.tag-event {
+	word-break: break-all;
+	display: inline-block;
+}
 .mainFooter p {
 	width: 91%;
 	margin: 2% auto;
