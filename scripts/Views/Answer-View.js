@@ -1,4 +1,4 @@
-var QuestionAnswerView = (function(){
+var AnswerView = (function(){
 	/*function visualizeQuestions(data){
 		var allQuestions = data.results.sort( function(a,b){
 			return a.createdAt > b.createdAt;
@@ -11,18 +11,18 @@ var QuestionAnswerView = (function(){
 					.attr("data-type","question")
 					.append(questionTitle)
 					.appendTo(questionsList);
-			answerView(question.objectId);
+			visualizeAllAnswers(question.objectId);
 		})
 	}*/
 	
-	function answerView(questionId){
+	function visualizeAllAnswers(questionId, questionSelector){
 		var promise = answersModule.getAllAnswersFromQuestion(questionId);
 		promise.success(function(data) {
 			var allAnswers = data.results,
 				answerList = $("<ul>")
 					.attr("data-id",questionId)
 					.attr("data-type","answersToQuestion"),
-				questionElement = $("[data-id='" + questionId + "'][data-type='question']");
+				questionElement = $(questionSelector);
 			
 			allAnswers.sort( function(a,b){
 				return a.createdAt > b.createdAt;
@@ -30,9 +30,17 @@ var QuestionAnswerView = (function(){
 			
 			allAnswers.forEach(function (answer) {
 				var answerElement = $('<li>')
-					.text(answer.content)
 					.attr("data-id",answer.objectId)
 					.attr("data-type","answer");
+				var answerContent = $('<p>').text(answer.content);
+				var answerDate = $('<span>').text(answer.createdAt);
+				var answerAuthor;
+				$.ajaxSetup({ async: false });
+				var responseJSONUser = UserModule.getUserById(answer.createdBy.objectId).responseJSON;
+				answerAuthor = responseJSONUser.username;
+				$.ajaxSetup({ async: true });
+				var authorElement = $('<span>').text(answerAuthor);
+				answerElement.append(answerContent,answerDate,answerAuthor);
 				answerList.append(answerElement);
 			});
 
@@ -46,6 +54,6 @@ var QuestionAnswerView = (function(){
 	}
 	
 	return {
-        answerView: answerView
+        visualizeAllAnswers: visualizeAllAnswers
 	}
 })();

@@ -52,6 +52,7 @@ var questionController = (function () {
             $.ajaxSetup({ async: true });
 
             mainSection.append(questionView.visualizeLargeQuestionWithAnswers(questionTitle, questionContent, questionAuthor))
+			mainSection.append(AnswerView.visualizeAllAnswers(questionID, "article"));
         }).error(function (err) {
             console.log(err);
         });

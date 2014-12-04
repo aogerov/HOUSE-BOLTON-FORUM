@@ -119,12 +119,32 @@ a:hover, a:active {
 }
 
 article {
+	margin-bottom: 3%;
+}
+
+article.small-question{
+	background-color: #FFF;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;	
+	padding: 3% 5%;
+	margin-bottom: 3%;
+}
+
+article.large-question > header{
 	background-color: #FFF;
 	border-radius: 5px;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;	
 	padding: 3% 5%;	
-	margin-bottom: 3%;
+}
+
+article > ul > li{
+	background-color: #CEEFFD;
+	padding: 20px;
+	list-style: none;
+	border-radius: 5px;
+	margin: 10px 0;
 }
 
 .content {

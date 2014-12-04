@@ -38,11 +38,13 @@ var questionView = (function () {
         var content = $('<span>').attr('class', 'large-question-content').text(questionContent);
         var author = $('<span>').attr('class', 'large-question-author').text(questionAuthor);
 
-        var question = $('<article>')
+        var article = $('<article>').addClass('large-question');
+		var question = $('<header>')
             .append(title)
             .append(content)
             .append(author);
-        return question;
+			article.append(question);
+        return article;
     }
 
     return {
