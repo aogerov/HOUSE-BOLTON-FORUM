@@ -1,11 +1,20 @@
 $(function () {
     Sammy('main', function () {
+        var mainSelector = $('main');
+
+
         this.get('#/', function () {
-            questionController.getAndVisualizeLastNQuestions(NUMBER_OF_LAST_QUESTIONS_DEFAULT);
+            mainSelector.text('');
+            questionController.getAndVisualizeLastNQuestions(NUMBER_OF_LAST_QUESTIONS_DEFAULT, mainSelector);
         });
         
-        this.get('#/view-question/:id', function (context) {
-            questionController.getAndVisualizeQuestionByID(this.params['id']);
+        this.get('#/view/question/:id', function (context) {
+            mainSelector.text('');
+            questionController.getAndVisualizeQuestionByID(this.params['id'], mainSelector);
+        });
+        this.get('#/add/question', function (context) {
+            mainSelector.text('');
+            questionController.VisualizeAddQuestion(mainSelector);
         });
         
         this.get('#/category/:id', function (context) {

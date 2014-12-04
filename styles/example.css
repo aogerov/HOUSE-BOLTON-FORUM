@@ -191,6 +191,14 @@ main h1 {
 	background: #fff;
 }
 
+#add-question{
+    text-align: center;
+}
+#add-question input, #add-question textarea, button {
+    margin: 0 auto;
+    display: block;
+}
+
 /*
    ======== Sidebar ========== 
   */

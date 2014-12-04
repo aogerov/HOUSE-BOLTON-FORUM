@@ -28,9 +28,7 @@ var questionsModule = (function () {
             url: "https://api.parse.com/1/classes/Question",
             data: JSON.stringify(question),
             contentType: 'application/json',
-            dataType: 'json',
-            success: questionAdded,
-            error: questionAddingError
+            dataType: 'json'
         });
     }
 

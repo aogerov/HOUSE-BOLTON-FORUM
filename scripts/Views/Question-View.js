@@ -1,6 +1,6 @@
 var questionView = (function () {
     function visualizeSmallQuestion(questionID, questionTitle, questionContent, questionAuthor, questionCategory, questionTags, questionVisits, questionVotes, questionAuthorId){
-        var title = $('<a href="#/view-question/'+ questionID + '">').append($('<h2 data-id="' + questionID + '">').attr('class', 'small-question-title').text(questionTitle));
+        var title = $('<a href="#/view/question/'+ questionID + '">').append($('<h2 data-id="' + questionID + '">').attr('class', 'small-question-title').text(questionTitle));
         var content = $('<p>').attr('class', 'small-question-content').text(questionContent);
         var author = $('<a href="#/user/' + questionAuthorId + '">').attr('class', 'small-question-author').text(questionAuthor);
         var category = $('<span>').attr('class', 'small-question-category').text(questionCategory);
@@ -47,8 +47,25 @@ var questionView = (function () {
         return article;
     }
 
+    function visualizeAddQuestion() {
+        var view = $(
+                '<div id="add-question">' +
+                '<label for="title">Title:</label><input type="text" id="title">' +
+                '<label for="content">Content:</label><textarea id="content"></textarea>' +
+                '<label for="tags">Tags:</label><input type="text" id="tags">' +
+                '<label for="category">Category:</label>' +
+                '<select id="category">' +
+                '<option value="Kosche">Kosche</option>' +
+                '</select>' +
+                '<button id="add-question-button">Add Question</button>' +
+                '</div>'
+        );
+        return $('<article class="small-question">').append(view);
+    }
+
     return {
         visualizeSmallQuestion: visualizeSmallQuestion,
-        visualizeLargeQuestionWithAnswers: visualizeLargeQuestionWithAnswers
+        visualizeLargeQuestionWithAnswers: visualizeLargeQuestionWithAnswers,
+        visualizeAddQuestion: visualizeAddQuestion
     }
 })();
