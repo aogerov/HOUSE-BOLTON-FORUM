@@ -1,3 +1,8 @@
+html, body, div, p , span, a, table, tr, td, th, tbody, thead, tfoot, header, footer, main, aside,nav, section, article,h1,h2,h3,h4,h5,h6, ul,li,ol,img, form, textarea,input,button{
+	margin:0;
+	padding:0;
+}
+
 /* 
    ======= Body style ======== 
  */
@@ -146,7 +151,7 @@ article.large-question > form {
 	margin-left: 5%;
 	width: 90%;
 }
-article.large-question > form > a{
+article.large-question > form > button{
 	width: 25%;
 	background-color: lightskyblue;
 	border: 1px solid lightslategray;
@@ -163,6 +168,9 @@ article.large-question > form > textarea{
 	width: 100%;
 	border-radius: 5px;
 }
+article.large-question > ul{
+	padding-left: 5%;
+}
 
 article > ul > li{
 	background-color: #CEEFFD;
@@ -170,6 +178,18 @@ article > ul > li{
 	list-style: none;
 	border-radius: 5px;
 	margin: 10px 0;
+}
+article > ul > li>img.avatar-img{
+	width:50px;
+	height:50px;
+}
+article > ul > li> div{
+	display:inline-block;
+	text-align:top;
+}
+
+article > ul > li> div>*{
+	display:inline-block;
 }
 
 .content {

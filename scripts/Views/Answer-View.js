@@ -1,70 +1,43 @@
 var AnswerView = (function(){
-	/*function visualizeQuestions(data){
-		var allQuestions = data.results.sort( function(a,b){
-			return a.createdAt > b.createdAt;
-		});
-		var questionsList = $("#questions");
-		allQuestions.forEach(function (question) {
-			var questionTitle = $("<span>").text(question.title),
-				questionElement = $("<li>")
-					.attr("data-id",question.objectId)
-					.attr("data-type","question")
-					.append(questionTitle)
-					.appendTo(questionsList);
-			visualizeAllAnswers(question.objectId);
-		})
-	}*/
-	
-	function visualizeAllAnswers(questionId, questionSelector){
-		var promise = answersModule.getAllAnswersFromQuestion(questionId);
-		promise.success(function(data) {
-			var allAnswers = data.results,
-				answerList = $("<ul>")
-					.attr("data-id",questionId)
-					.attr("data-type","answersToQuestion"),
-				questionElement = $(questionSelector);
-			
-			allAnswers.sort( function(a,b){
-				return a.createdAt > b.createdAt;
-			});
-			
-			allAnswers.forEach(function (answer) {
-				var answerElement = $('<li>')
-					.attr("data-id",answer.objectId)
-					.attr("data-type","answer");
-				var answerContent = $('<p>').text(answer.content);
-				var answerDate = $('<span>').text(answer.createdAt);
-				var answerAuthor;
-				$.ajaxSetup({ async: false });
-				var responseJSONUser = UserModule.getUserById(answer.createdBy.objectId).responseJSON;
-				answerAuthor = responseJSONUser.username;
-				$.ajaxSetup({ async: true });
-				var authorElement = $('<span>').text(answerAuthor);
-				answerElement.append(answerContent,answerDate,answerAuthor);
-				answerList.append(answerElement);
-			});
+	function visualizeAllAnswers(allAnswers){
+		var	answerList = $("<ul>")
+					.attr("data-type","answersToQuestion");
 
-			questionElement.append(answerList);
-			visualizeAddAnswer(questionSelector);
+		allAnswers.forEach(function (answer) {
+			var answerElement = visualizeAnswer(answer);
+			answerList.append(answerElement);
 		});
 		
-		promise.error(function(data){
-			console.log("Cannot visualize answers");
-			console.log(data);
-		});
+		return answerList;
+	}
+	
+	function visualizeAnswer(answer){
+		var answerElement = $('<li>')
+			.attr("data-id",answer.objectId)
+			.attr("data-type","answer");
+		var answerContent = $('<p>').text(answer.content);
+		var answerDate = $('<div>').text(answer.createdAt.replace("T"," ").replace(/:[0-9]{2}.[0-9]{3}Z/,''));
+		var answerAuthor = answer.createdBy;
+		var authorElement = $('<a>').text(answerAuthor.username).attr('href','#/user/'+ answerAuthor.objectId);
+		var authorRanking = $('<div>').text('Ranking: ' + answerAuthor.ranking);
+		var avatar = $('<img>').attr('src',answerAuthor.avatar.url).addClass('avatar-img');
+		var info = $('<div>').append(answerDate,authorElement,authorRanking);
+		answerElement.append(avatar,info,answerContent);
+		
+		return answerElement;
 	}
 	
 	function visualizeAddAnswer(questionSelector){ 
 		var form = $('<form>');
-		var question = $(questionSelector);
-		var textarea = $('<textarea>');
-		var addButton = $('<a href="#">Add answer</a>'); // TODO: link
+		var textarea = $('<textarea>').attr('id','answer-content-input');
+		var addButton = $('<button>Add answer</button>').attr('id','add-answer-btn');
 		form.append(textarea, addButton);
-		question.append(form);
+		return form;
 	}
 	
 	return {
         visualizeAllAnswers: visualizeAllAnswers,
-		visualizeAddAnswer:visualizeAddAnswer
+		visualizeAddAnswer:visualizeAddAnswer,
+		visualizeAnswer:visualizeAnswer
 	}
 })();

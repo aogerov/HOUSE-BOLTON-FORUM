@@ -6,7 +6,20 @@ var answersModule = (function(){
 				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
 				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 			},
+			data:"include=createdBy",
 			url: 'https://api.parse.com/1/classes/Answer?where={"question":{"__type":"Pointer","className":"Question","objectId":"' + questionID + '"}}'
+		});
+	}
+	
+	function getAnswerById(answerId) {
+		return $.ajax({
+			method: "GET",
+			headers: {
+				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+			},
+			data:"include=createdBy",
+			url: 'https://api.parse.com/1/classes/Answer/' + answerId
 		});
 	}
 	
@@ -65,6 +78,7 @@ var answersModule = (function(){
 		getAllAnswersFromQuestion: getAllAnswersFromQuestion,
 		addAnswer: addAnswer,
 		deleteAnswer: deleteAnswer,
-		editAnswer: editAnswer
+		editAnswer: editAnswer,
+		getAnswerById:getAnswerById
 	}
 })();

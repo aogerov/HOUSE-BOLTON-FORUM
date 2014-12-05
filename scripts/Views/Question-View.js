@@ -33,12 +33,12 @@ var questionView = (function () {
         return question;
     }
 
-    function visualizeLargeQuestionWithAnswers(questionTitle, questionContent, questionAuthor) {
+    function visualizeLargeQuestionWithAnswers(questionTitle, questionContent, questionAuthor, questionID) {
         var title = $('<h3>').attr('class', 'large-question-title').text(questionTitle);
         var content = $('<span>').attr('class', 'large-question-content').text(questionContent);
         var author = $('<span>').attr('class', 'large-question-author').text(questionAuthor);
 
-        var article = $('<article>').addClass('large-question');
+        var article = $('<article>').addClass('large-question').attr('data-id',questionID);
 		var question = $('<header>')
             .append(title)
             .append(content)

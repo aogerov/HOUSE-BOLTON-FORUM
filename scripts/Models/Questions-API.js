@@ -1,6 +1,6 @@
 var questionsModule = (function () {
 
-    function addQuestion(title, content, userID, categoryID, tags) {
+    function addQuestion(title, content, userID, categoryID, tagIDsArray) {
         var question = {
             title: title,
             content: content,
@@ -15,9 +15,22 @@ var questionsModule = (function () {
                 objectId: categoryID
             },
             visits: 0,
-            votes: 0
-            //TODO: IMPLEMENT TAGS
+            votes: 0,
+			tags: { 
+				__op: "AddRelation", 
+				objects: [] // filled below
+			}
         };
+		var tagPointers = [];
+		tagIDsArray.forEach(function(tagID){
+			tagPointers.push({
+               __type: "Pointer",
+               className: "Tag",
+               objectId: tagID
+           });
+		});
+		
+		question.tags.objects = tagPointers;
 
         return $.ajax({
             type: "POST",
@@ -116,6 +129,26 @@ var questionsModule = (function () {
             url: "https://api.parse.com/1/classes/Question/" + questionID
         });
     }
+	
+	function getAllTagsRelatedToQuestion(questionID){
+		return $.ajax({
+			method: "GET",
+			headers: {
+				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+			},
+			data: 'where=' + JSON.stringify({
+				$relatedTo:{
+					object: {
+						__type: "Pointer",
+						className:"Question",
+						objectId: questionID
+					},
+					key: "tags"
+				}
+			}),
+			url: 'https://api.parse.com/1/classes/Tag'});
+	}
 
     return {
         addQuestion: addQuestion,
@@ -125,6 +158,7 @@ var questionsModule = (function () {
         getAllQuestionsFromUser: getAllQuestionsFromUser,
         searchQuestionsByTitle: searchQuestionsByTitle,
         deleteQuestion: deleteQuestion,
-        editQuestion: editQuestion
+        editQuestion: editQuestion,
+		getAllTagsRelatedToQuestion:getAllTagsRelatedToQuestion
     }
 })();

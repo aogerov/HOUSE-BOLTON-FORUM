@@ -39,8 +39,8 @@ var questionController = (function () {
                 var questionAuthor;
                 questionAuthor = userData.username;
 
-                selector.append(questionView.visualizeLargeQuestionWithAnswers(questionTitle, questionContent, questionAuthor));
-                selector.append(AnswerView.visualizeAllAnswers(questionID, "article"));
+                selector.append(questionView.visualizeLargeQuestionWithAnswers(questionTitle, questionContent, questionAuthor, question.objectId));
+                AnswerController.visualizeAllAnswers(questionID, "article");
             });
         }).error(function (err) {
             console.log(err);
