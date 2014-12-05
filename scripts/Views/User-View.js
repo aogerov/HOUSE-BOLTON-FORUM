@@ -3,8 +3,18 @@
 var UserView = (function () {
     function registerView() {
         function reg() {
-            // cannot catch thronw errors ?!
-            UserController.registerUser($('#userNameInput').val(), $('#emailInput').val(), $('#password1Input').val(), $('#password2Input').val());
+            try {
+                UserController.registerUser($('#userNameInput').val(), $('#emailInput').val(), $('#password1Input').val(), $('#password2Input').val())
+                .success(function () {
+                    notyTopCenter('success', 'Successfully registered!', 3);
+                })
+                .error(function (error) {
+                    notyInCustomContainer($('#registerSection'), 'bottomCenter', 'warning', JSON.parse(error.responseText).error, 3);
+                });
+
+            } catch (ex) {
+                notyInCustomContainer($('#registerSection'), 'bottomCenter', 'warning', ex.message, 3);
+            }
         }
         
         var parentContainer = $('main');
@@ -66,12 +76,16 @@ var UserView = (function () {
     
     function loginView() {
         function login() {
-            UserController.loginUser($('#userNameLoginInput').val(), $('#passwordLoginInput').val()).error(function () {
-                $('#loginMessageLabel')
-                        .text('Cannot login with this username and password.')
-                        .css('color', 'red').css('display', 'inline-block')
-                        .fadeOut(5000);
-            });
+            try {
+                UserController.loginUser($('#userNameLoginInput').val(), $('#passwordLoginInput').val()).success(function () {
+                    notyTopCenter('success', 'Successfully logged-in!', 3);
+                }).error(function () {
+                    notyInCustomContainer($('#loginSection'), 'bottomCenter', 'warning', 'Invalid username or password.', 3);
+                });
+
+            } catch (ex) {
+                notyInCustomContainer($('#loginSection'), 'bottomCenter', 'warning', ex.message, 3);
+            }
         }
         
         var parentContainer = $('main');
@@ -120,6 +134,10 @@ var UserView = (function () {
         if (existingLoginContainer.length !== 0) {
             existingLoginContainer.remove();
         }
+    }
+    
+    function logoutView() {
+        notyTopCenter('success', 'Successfully loggout!', 3);
     }
     
     function userProfileView(user, isYours) {
@@ -259,7 +277,7 @@ var UserView = (function () {
             
             $('<input>')
                 .attr('id', 'confirmPass')
-                .attr('type', 'text')
+                .attr('type', 'password')
                 .attr('placeholder', 'confirm password...')
                 .attr('required', 'required')
                 .appendTo(userProfileContainer);
@@ -296,22 +314,20 @@ var UserView = (function () {
             var newUserName = $('#userNameProfileInput').val();
             var newEmail = $('#emailProfileInput').val();
             var oldPass = $('#confirmPass').val();
-            
-            if (!oldPass) {
-                throw new Error('You should confirm your password to apply new settings!');
+
+            try {
+                var newCity = $('#cityProfileInput').val();
+                if (!newCity) {
+                    newCity = null;
+                }
+                
+                var newBirthDate;
+                var newGender = $('#isMaleGenderSelect').val();
+                UserController.editUser(user.objectId, oldPass, newUserName, newEmail, avatarFile, newCity, newBirthDate, newGender);
+            } catch (ex) {
+                notyInCustomContainer($('#userProfileSection'), 'bottomCenter', 'warning', ex.message, 3);
             }
-            
-            var newPass1;
-            var newPass2;
-            
-            var newCity = $('#cityProfileInput').val();
-            if (!newCity) {
-                newCity = null;
-            }
-            
-            var newBirthDate;
-            var newGender = $('#isMaleGenderSelect').val();
-            UserController.editUser(user.objectId, oldPass, newUserName, newEmail, avatarFile, newCity, newBirthDate, newGender, newPass1, newPass2);
+
         }
     }
     
@@ -398,6 +414,7 @@ var UserView = (function () {
         registerView: registerView,
         removeRegisterView: removeRegisterView,
         loginView: loginView,
+        logoutView: logoutView,
         removeLoginView: removeLoginView,
         userProfileView: userProfileView,
         removeUserProfileView: removeUserProfileView,

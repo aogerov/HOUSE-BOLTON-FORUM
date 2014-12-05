@@ -2,18 +2,19 @@
 var UserController = (function () {
     function registerUser(username, email, pass1, pass2) {
         // checks username exists
+        checkValidUserName(username);
+        checkValidEmail(email);
         checkPasswords(pass1, pass2);
         
         return UserModule.getUserByUserName(username).success(function (data) {
             if (data.results.length !== 0) {
-                alert('User already exist with that username.');
+                //alert('User already exist with that username.');
+                notyInCustomContainer($('#registerSection'), 'bottomCenter', 'warning', 'Username is taken.', 3);
                 throw new Error('User already exist with that username.');
             }
             
             // add new user to DB.
-            return UserModule.addToDatabase(username, email, pass1).success(function (dbData) {
-                alert('Successfully registered!');
-                
+            UserModule.addToDatabase(username, email, pass1).success(function (dbData) {
                 // set default user avatar:
                 UserModule.getDefaultSettings().success(function (defaultData) {
                     UserController.editUserSingleColumn(dbData.objectId, dbData.sessionToken, 'avatar', defaultData.defaultAvatar);
@@ -22,7 +23,6 @@ var UserController = (function () {
                 // sign-in registered user:
                 UserController.loginUser(username, pass1);
             }).error(function (error) {
-                console.log(JSON.parse(error.responseText).error);
                 alert('Cannot create new user. Try again.');
                 throw new Error('Cannot create new user. Try again.');
             });
@@ -32,21 +32,39 @@ var UserController = (function () {
         });
     }
     
+    function checkValidUserName(username) {
+        if (!username) {
+            throw new ReferenceError('Username cannot be empty.');
+        }
+        
+        var notValidCharachtersPattern = /[^A-Za-z0-9\_\s\.\-]/;
+        if (notValidCharachtersPattern.test(username)) {
+            throw new TypeError('Username contains invalid charachters. Only latin letters, digits, space, dot and dash allowed.');
+        }
+    }
+    
     function checkValidEmail(email) {
-        // TODO: imlement email validation
+        if (!email) {
+            throw new ReferenceError('Email cannot be empty.');
+        }
+        
+        var validEmailPattern = /([a-zA-Z0-9]+(([._-][a-zA-Z0-9]+)+)?@[a-zA-Z0-9]+(([.-][a-zA-Z0-9]+)+)?[.][a-zA-Z0-9]+)/;
+        if (!validEmailPattern.test(email)) {
+            throw new TypeError('Invalid email.');
+        }
     }
     
     function checkPasswords(pass1, pass2) {
         if (!pass1) {
-            throw new Error('Password cannot be empty or white space(s)');
+            throw new ReferenceError('Password cannot be empty or white space(s)');
         }
         
         if (!pass2) {
-            throw new Error('Password cannot be empty or white space(s)');
+            throw new ReferenceError('Password cannot be empty or white space(s)');
         }
         
         if (pass1 !== pass2) {
-            throw new Error('Password is not the same!');
+            throw new TypeError('Password is not the same!');
         }
     }
     
@@ -88,7 +106,7 @@ var UserController = (function () {
             sessionStorage.removeItem('loggedUser');
             UserView.showAndHideLoginLogoutRegisterIfUserIsLogged(false);
             UserView.removeUserProfileView();
-            alert('Successfuly loggout.');
+            UserView.logoutView();
         }
     }
     
@@ -102,7 +120,7 @@ var UserController = (function () {
     
     function checkIsUserLoggedIn() {
         var loggedUser = getSessionLoggedUser();
-        if (loggedUser === null) {
+        if (!loggedUser) {
             UserView.showAndHideLoginLogoutRegisterIfUserIsLogged(false);
         } else {
             UserView.showAndHideLoginLogoutRegisterIfUserIsLogged(true, loggedUser.objectId, loggedUser.username);
@@ -165,24 +183,32 @@ var UserController = (function () {
         });
     }
     
-    function editUser(editedUserId, editorPass, newUserName, newEmail, avatarFile, newCity, newBirthDate, newGender, newPass1, newPass2) {
+    function editUser(editedUserId, editorPass, newUserName, newEmail, avatarFile, newCity, newBirthDate, newGender) {
+        if (!editedUserId) {
+            throw new ReferenceError('Invalid userID.');
+        }
+        
+        if (!editorPass) {
+            throw new ReferenceError('You should confirm your password to apply new settings!');
+        }
+        
+        if (!newUserName) {
+            throw new ReferenceError('Username cannot be empty.');
+        }
+        
+        if (!newEmail) {
+            throw new Error('Email cannot be empty.');
+        }
+        
         var editedUser = {};
         UserModule.getUserById(editedUserId).success(function (editedUserData) {
             var isNeededLogout = false;
             if (newUserName !== editedUserData.username) {
-                if (!newUserName) {
-                    throw new Error('Username cannot be empty.');
-                }
-                
                 editedUser['username'] = newUserName;
                 isNeededLogout = true;
             }
             
             if (editedUserData.email.toLowerCase() !== newEmail.toLocaleLowerCase()) {
-                if (!newEmail) {
-                    throw new Error('Email cannot be empty.');
-                }
-                
                 editedUser['email'] = newEmail;
             }
             
@@ -208,14 +234,6 @@ var UserController = (function () {
                 editedUser['isMale'] = newGender;
             }
             
-            //if (oldUser.password !== password) {
-            //    editUser[password] = password;
-            //}
-            
-            
-            //if (oldUser.avatar.url !== avatar.url) {
-            //    editUser[avatar] = avatar;
-            //}
             
             if (Object.keys(editedUser).length) {
                 var editor = getSessionLoggedUser();
@@ -234,6 +252,8 @@ var UserController = (function () {
                 }).error(function (error) {
                     throw new Error('Wrong password or you don\'t have permision to edit that user.');
                 });
+            } else {
+                alert('No changes to save.');
             }
         }).error(function () {
             throw new Error('Invalid edited user ID.');
