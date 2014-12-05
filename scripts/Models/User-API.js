@@ -13,6 +13,18 @@ var UserModule = (function () {
     }
     
     function addUserToDatabase(username, email, pass1) {
+        //var acl = {
+        //    "*": {
+        //        "read": false
+        //    }
+        //};
+        
+        //var ACL = {};
+        ////ACL['qZ047wDesX'] = { "write": true, "read": true };
+        //ACL['*'] = { "read": false };
+        ////ACL["role:admin"] = { "read": true, "write": true };
+        
+        
         return $.ajax({
             type: "POST",
             headers: {
