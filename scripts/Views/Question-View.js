@@ -54,9 +54,7 @@ var questionView = (function () {
                 '<label for="content">Content:</label><textarea id="content"></textarea>' +
                 '<label for="tags">Tags:</label><input type="text" id="tags">' +
                 '<label for="category">Category:</label>' +
-                '<select id="category">' +
-                '<option value="Kosche">Kosche</option>' +
-                '</select>' +
+                '<select id="category"></select>' +
                 '<button id="add-question-button">Add Question</button>' +
                 '</div>'
         );

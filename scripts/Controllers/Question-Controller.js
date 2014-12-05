@@ -50,6 +50,7 @@ var questionController = (function () {
 
     function VisualizeAddQuestion(selector) {
         selector.append(questionView.visualizeAddQuestion());
+        categoryController.fillCategoriesSelect();
         $('#add-question-button').click(function () {
             var title = $('#title').val();
             var content = $('#content').val();
