@@ -21,7 +21,8 @@ var UserController = (function () {
                 
                 // sign-in registered user:
                 UserController.loginUser(username, pass1);
-            }).error(function () {
+            }).error(function (error) {
+                console.log(JSON.parse(error.responseText).error);
                 alert('Cannot create new user. Try again.');
                 throw new Error('Cannot create new user. Try again.');
             });
@@ -136,7 +137,7 @@ var UserController = (function () {
     }
     
     function editUserSingleColumn(userId, sessionToken, columnToChange, newContent) {
-        var user = getSessionLoggedUser();
+        //var user = getSessionLoggedUser();
         if (columnToChange.toString().toLowerCase() === 'username') {
             throw new Error('Username cannot be changed');
         }
@@ -158,52 +159,84 @@ var UserController = (function () {
             }
         }
         
-        return UserModule.editUserColumn(user.objectId, user.sessionToken, columnToChange, newContent)
+        return UserModule.editUserColumn(userId, sessionToken, columnToChange, newContent)
         .error(function () {
             throw new Error('Cannot edit user data: ' + columnToChange);
         });
     }
     
-    function editUser(userId, sessionToken, username, email, password, avatar) {
-        
-        
-        UserModule.retrievingCurrentUser(sessionToken).success(function (oldUser) {
-            var editedUser = {};
-            if (oldUser.email.toLowerCase() !== email.toLocaleLowerCase()) {
-                editUser[email] = email;
+    function editUser(editedUserId, editorPass, newUserName, newEmail, avatarFile, newCity, newBirthDate, newGender, newPass1, newPass2) {
+        var editedUser = {};
+        UserModule.getUserById(editedUserId).success(function (editedUserData) {
+            var isNeededLogout = false;
+            if (newUserName !== editedUserData.username) {
+                if (!newUserName) {
+                    throw new Error('Username cannot be empty.');
+                }
+                
+                editedUser['username'] = newUserName;
+                isNeededLogout = true;
             }
             
-            if (oldUser.password !== password) {
-                editUser[password] = password;
+            if (editedUserData.email.toLowerCase() !== newEmail.toLocaleLowerCase()) {
+                if (!newEmail) {
+                    throw new Error('Email cannot be empty.');
+                }
+                
+                editedUser['email'] = newEmail;
             }
             
-            
-            if (oldUser.avatar.url !== avatar.url) {
-                editUser[avatar] = avatar;
+            if (avatarFile) {
+                avatarFile = JSON.parse(avatarFile);
+                avatarFile.__type = 'File';
+                editedUser['avatar'] = avatarFile;
             }
             
+            if (editedUserData.city !== newCity) {
+                if (!newCity) {
+                    console.log('null set');
+                    editedUser['city'] = null;
+                } else {
+                    console.log('dasdas set');
+                    
+                    editedUser['city'] = newCity;
+                }
+            }
             
-            if (oldUser.username != username) {
-                UserModule.getUserByUserName(username).success(function (existingUsername) {
-                    if (existingUsername.results.length != 0) {
-                        throw new Error('Username already exists.');
-                    } else {
-                        UserModule.editUser(editedUser);
-                    }
-                }).error(function () {
-                    alert('Cannot edit username.');
-                    throw new Error('Cannot edit username.');
+            newGender = JSON.parse(newGender);
+            if (editedUserData.isMale !== newGender) {
+                editedUser['isMale'] = newGender;
+            }
+            
+            //if (oldUser.password !== password) {
+            //    editUser[password] = password;
+            //}
+            
+            
+            //if (oldUser.avatar.url !== avatar.url) {
+            //    editUser[avatar] = avatar;
+            //}
+            
+            if (Object.keys(editedUser).length) {
+                var editor = getSessionLoggedUser();
+                UserModule.login(editor.username, editorPass).success(function (editorData) {
+                    UserModule.editUser(editedUserId, editorData.sessionToken, editedUser).success(function () {
+                        alert('All data was saved.');
+                        if (isNeededLogout) {
+                            alert('You should login with new username:');
+                            loggoutUser();
+                            window.location = '#/login/';
+                        }
+
+                    }).error(function (error) {
+                        throw new Error('Cannot save new settings. ' + JSON.parse(error.responseText).error);
+                    });
+                }).error(function (error) {
+                    throw new Error('Wrong password or you don\'t have permision to edit that user.');
                 });
             }
-            
-            UserModule.editUser(editedUser).success(function () {
-                alert('All data was saved.');
-            }).error(function () {
-                throw new Error('Cannot save new settings.');
-            });
-
         }).error(function () {
-            throw new Error('Invalid user ID.');
+            throw new Error('Invalid edited user ID.');
         });
     }
     
@@ -218,6 +251,7 @@ var UserController = (function () {
     return {
         registerUser: registerUser,
         loginUser: loginUser,
+        getLoggedUser: getSessionLoggedUser,
         loggoutUser: loggoutUser,
         isUserOwnsProfile: visualizeUserProfile,
         editUserSingleColumn: editUserSingleColumn,

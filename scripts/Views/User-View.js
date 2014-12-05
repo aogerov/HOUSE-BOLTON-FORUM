@@ -15,8 +15,7 @@ var UserView = (function () {
         if (existingRegisterContainer.length == 0) {
             var registerContainer = $('<article>')
                 .attr('id', 'registerSection')
-                .attr('class', 'small-question')
-                .appendTo(parentContainer);
+                .attr('class', 'small-question');
             
             $('<h2>')
                 .text('Registration:')
@@ -52,6 +51,8 @@ var UserView = (function () {
                 .attr('value', 'Register')
                 .appendTo(registerContainer)
                 .click('click', reg);
+            
+            registerContainer.appendTo(parentContainer);
         }
     }
     
@@ -76,13 +77,12 @@ var UserView = (function () {
         var parentContainer = $('main');
         parentContainer.children().remove();
         
-        
         var existingLoginContainer = $('#loginSection');
         if (existingLoginContainer.length == 0) {
             var loginContainer = $('<article>')
                 .attr('id', 'loginSection')
-                .attr('class', 'small-question')
-                .appendTo(parentContainer);
+                .attr('class', 'small-question');
+            
             $('<h2>')
                 .text('Login:')
                 .attr('id', 'loginLabel')
@@ -109,6 +109,8 @@ var UserView = (function () {
                 .text('')
                 .attr('id', 'loginMessageLabel')
                 .appendTo(loginContainer);
+            
+            loginContainer.appendTo(parentContainer);
         }
     }
     
@@ -122,17 +124,15 @@ var UserView = (function () {
     
     function userProfileView(user, isYours) {
         var parentContainer = $('body main');
-        parentContainer
-                .children()
-                .remove();
+        parentContainer.children().remove();
         
         var existingUserProfileContainer = $('#userProfileSection');
         existingUserProfileContainer.remove();
         
         var userProfileContainer = $('<article>')
-                .attr('id', 'userProfileSection')
-				.attr('class', 'small-question')
-                .appendTo(parentContainer);
+            .attr('id', 'userProfileSection')
+            .attr('class', 'small-question');
+        
         
         $('<h2>')
                 .text(user.username + ' profile:')
@@ -156,6 +156,11 @@ var UserView = (function () {
         var profileInfoContainer = $('<div>')
                 .attr('id', 'profileInfoContainer')
                 .appendTo(userProfileContainer);
+        $('<label>')
+                .text('Ranking:' + user.ranking)
+                .attr('id', 'rankingProfileLabel')
+                .appendTo(profileInfoContainer);
+        
         $('<h4>')
                 .attr('id', 'personalInfoHeading')
                 .text('Personal info:')
@@ -182,11 +187,50 @@ var UserView = (function () {
                 .attr('placeholder', 'email...')
                 .attr('value', user.email)
                 .appendTo(profileInfoContainer);
-        $('<label>')
-                .text('Ranking:' + user.ranking)
-                .attr('id', 'rankingProfileLabel')
-                .appendTo(profileInfoContainer);
         
+        if (isYours || user.city) {
+            $('<label>')
+                .text('City:')
+                .attr('id', 'cityProfileLabel')
+                .appendTo(profileInfoContainer);
+            $('<' + changeTag + '>')
+                .attr('id', 'cityProfileInput')
+                .text(user.city)
+                .attr('type', 'text')
+                .attr('placeholder', 'city...')
+                .attr('value', user.city)
+                .appendTo(profileInfoContainer);
+        }
+        
+        if (isYours || user.isMale != undefined || user.isMale != null) {
+            $('<label>')
+                .text('Gender:')
+                .attr('id', 'genderProfileLabel')
+                .appendTo(profileInfoContainer);
+            
+            if (isYours) {
+                var isMaleSelect = $('<select>').attr('id', 'isMaleGenderSelect');
+                var undefinedOption = $('<option>').attr('value', 'null').text('').appendTo(isMaleSelect);
+                var maleOption = $('<option>').attr('value', true).text('Male').appendTo(isMaleSelect);
+                var femaleOption = $('<option>').attr('value', false).text('Female').appendTo(isMaleSelect);
+                if (user.isMale == undefined || user.isMale == null) {
+                    isMaleSelect.prop('selectedIndex', 0);
+                } else {
+                    if (user.isMale) {
+                        maleOption.attr('selected', true);
+                    } else {
+                        femaleOption.attr('selected', true);
+                    }
+                }
+                
+                isMaleSelect.appendTo(profileInfoContainer);
+            } else {
+                $('<label>')
+                .attr('id', 'isMaleProfileLabel')
+                .text(user.isMale?'Male':'Female')
+                .appendTo(profileInfoContainer);
+            }
+        }
         
         
         if (!user.avatar) {
@@ -214,6 +258,13 @@ var UserView = (function () {
             //$('<label>').text('Rank:' + userRole.name).attr('id', 'profileImage').attr('src', user.avatar).appendTo(userProfileContainer);
             
             $('<input>')
+                .attr('id', 'confirmPass')
+                .attr('type', 'text')
+                .attr('placeholder', 'confirm password...')
+                .attr('required', 'required')
+                .appendTo(userProfileContainer);
+            
+            $('<input>')
                 .attr('id', 'saveChangesButton')
                 .attr('type', 'button')
                 .attr('value', 'Save')
@@ -221,6 +272,7 @@ var UserView = (function () {
                 .click('click', saveChanges);
         }
         
+        userProfileContainer.appendTo(parentContainer);
         
         function changeAvatar() {
             var file;
@@ -240,20 +292,26 @@ var UserView = (function () {
         }
         
         function saveChanges() {
-            var uploadedFile = JSON.parse($('#profileImage').attr('data-filename'));
-            console.log(uploadedFile);
-            //console.log(user);
-            if (uploadedFile) {
-                var editedAvatar = UserController.editUserSingleColumn(user.objectId, user.sessionToken, 'avatar', uploadedFile);
-                console.log(editedAvatar);
-            }
-
-            // TODO : apply other changes
-            //if ($('#emailProfileInput').text()!== $('#emailProfileInput').val()) {
-            //    alert('new Email');
-            //}
-
+            var avatarFile = $('#profileImage').attr('data-filename');
+            var newUserName = $('#userNameProfileInput').val();
+            var newEmail = $('#emailProfileInput').val();
+            var oldPass = $('#confirmPass').val();
             
+            if (!oldPass) {
+                throw new Error('You should confirm your password to apply new settings!');
+            }
+            
+            var newPass1;
+            var newPass2;
+            
+            var newCity = $('#cityProfileInput').val();
+            if (!newCity) {
+                newCity = null;
+            }
+            
+            var newBirthDate;
+            var newGender = $('#isMaleGenderSelect').val();
+            UserController.editUser(user.objectId, oldPass, newUserName, newEmail, avatarFile, newCity, newBirthDate, newGender, newPass1, newPass2);
         }
     }
     
@@ -340,7 +398,6 @@ var UserView = (function () {
         registerView: registerView,
         removeRegisterView: removeRegisterView,
         loginView: loginView,
-        //logoutView: logoutView,
         removeLoginView: removeLoginView,
         userProfileView: userProfileView,
         removeUserProfileView: removeUserProfileView,
