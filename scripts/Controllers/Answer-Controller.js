@@ -14,7 +14,7 @@ var AnswerController = (function () {
 				$(questionSelector).append(addAnswerElement);
 				
 				$('#add-answer-btn').click(function(){
-					var questionID = $(this).parent().parent().attr('data-id');
+					var questionID = $('article').attr('data-id');
 					var answerContent = $('#answer-content-input').val();
 					var user = UserController.getLoggedUser();
 					var userID = user.objectId;

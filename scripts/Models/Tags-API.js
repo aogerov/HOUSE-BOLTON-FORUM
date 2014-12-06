@@ -39,7 +39,7 @@ var tagModule = (function() {
 			url: "https://api.parse.com/1/classes/Tag",
 			data: JSON.stringify(tag),
 			contentType: 'application/json',
-			dataType: 'json',
+			dataType: 'json'
 		});
 
 	}
@@ -62,7 +62,7 @@ var tagModule = (function() {
 					"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
            			 "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 				},
-				url: 'https://api.parse.com/1/classes/Tag?where={"name":"' + name +'"}',
+				url: 'https://api.parse.com/1/classes/Tag?where={"name":"' + name +'"}'
 			});
 
 	}
@@ -73,7 +73,7 @@ var tagModule = (function() {
 					"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
                 "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 				},
-				url: 'https://api.parse.com/1/classes/Tag?where={"objectId":"' + tagId +'"}',
+				url: 'https://api.parse.com/1/classes/Tag?where={"objectId":"' + tagId +'"}'
 			});
 
 	}
@@ -104,30 +104,27 @@ var tagModule = (function() {
 			});
 	}
 
-	function getAllQuestionRelatedToTag(tagId) {
-		return $.ajax({
-			method: "GET",
-			headers: {
-				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
-				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
-			},
-
-			// data: 'where=' + JSON.stringify({
-			// 	$relatedTo:{
-			// 		object: {
-			// 			__type: "Pointer",
-			// 			className:"Tag",
-			// 			objectId: tagId
-			// 		},
-			// 		key: "question"
-			// 	}
-			// }),
-			// url: 'https://api.parse.com/1/classes/Question'});
 
 
-			url: 'https://api.parse.com/1/classes/Question?where={"$relatedTo":{"object":{"__type":"Pointer","className":"Tag","objectId":"'+ tagId +'"},"key":"question"}}'
-	})
-	}
+    function getAllTagsRelatedToQuestion(questionID){
+        return $.ajax({
+            method: "GET",
+            headers: {
+                "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+                "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+            },
+            data: 'where=' + JSON.stringify({
+                $relatedTo:{
+                    object: {
+                        __type: "Pointer",
+                        className:"Question",
+                        objectId: questionID
+                    },
+                    key: "tags"
+                }
+            }),
+            url: 'https://api.parse.com/1/classes/Tag'});
+    }
 	
 	return {
 		getAllTags: getAllTags,
@@ -136,7 +133,7 @@ var tagModule = (function() {
 		getTagByName: getTagByName,
 		getTagById: getTagById,
 		editTag: editTag,
-		getAllQuestionRelatedToTag: getAllQuestionRelatedToTag
+        getAllTagsRelatedToQuestion: getAllTagsRelatedToQuestion
 		
 	}
 })();

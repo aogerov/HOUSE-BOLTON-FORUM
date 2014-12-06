@@ -16,12 +16,11 @@ var AnswerView = (function(){
 			.attr("data-id",answer.objectId)
 			.attr("data-type","answer");
 		var answerContent = $('<p>').text(answer.content);
-		var answerDate = $('<div>').text(answer.createdAt.replace("T"," ").replace(/:[0-9]{2}.[0-9]{3}Z/,''));
+		var answerDate = $('<div>').text(new Date(answer.createdAt).toLocaleString());
 		var answerAuthor = answer.createdBy;
 		var authorElement = $('<a>').text(answerAuthor.username).attr('href','#/user/'+ answerAuthor.objectId);
-		var authorRanking = $('<div>').text('Ranking: ' + answerAuthor.ranking);
 		var avatar = $('<img>').attr('src',answerAuthor.avatar.url).addClass('avatar-img');
-		var info = $('<div>').append(answerDate,authorElement,authorRanking);
+		var info = $('<div class="post-info">').append(authorElement,answerDate);
 		answerElement.append(avatar,info,answerContent);
 		
 		return answerElement;

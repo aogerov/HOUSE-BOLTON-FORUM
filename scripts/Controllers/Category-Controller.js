@@ -12,16 +12,15 @@ var categoryController = (function () {
 		$(ul).appendTo('aside#categories');
 	}
 
-	function getAndVisualizeSingleCategory(categoryId) {
-        var mainSection = $('main');
-        mainSection.text('');
-
-		CategoriesModule
-			.getCategoryByID(categoryId)
+	function getAndVisualizeSingleCategory(categoryId, selector) {
+		CategoriesModule.getCategoryByID(categoryId)
 			.success(function (data) {
-				var h1 = CategoryView.viewSingleCategory(data);
-				$(h1).prependTo('main');
+				var h1 = CategoryView.viewSingleCategory(data).addClass('category-title');
+				$(h1).prependTo(selector);
 			});
+        questionsModule.getAllQuestionsFromCategory(categoryId).success(function (data) {
+            questionController.getAndVisualizeSmallQuestions(data.results, selector);
+        })
 	}
 
 	function fillCategoriesSelect() {

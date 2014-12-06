@@ -52,6 +52,7 @@ var questionsModule = (function () {
                 "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
                 "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
             },
+            data: 'include=createdBy,category&order=-createdAt',
             url: "https://api.parse.com/1/classes/Question/" + questionID
         });
     }
@@ -69,6 +70,7 @@ var questionsModule = (function () {
                 "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
                 "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
             },
+            data: 'order=-createdAt&include=createdBy,category',
             url: "https://api.parse.com/1/classes/Question" + howMuchQuestionsToGet
         });
     }
@@ -80,7 +82,7 @@ var questionsModule = (function () {
                 "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
                 "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
             },
-            url: 'https://api.parse.com/1/classes/Question?where={"category":{"__type":"Pointer","className":"Category","objectId":"' + categoryID + '"}}'
+            url: 'https://api.parse.com/1/classes/Question?where={"category":{"__type":"Pointer","className":"Category","objectId":"' + categoryID + '"}}&order=-createdAt&include=createdBy,category'
         });
     }
 
@@ -91,6 +93,7 @@ var questionsModule = (function () {
                 "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
                 "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
             },
+            data: 'include=createdBy,category&order=-createdAt',
             url: 'https://api.parse.com/1/classes/Question?where={"createdBy":{"__type":"Pointer","className":"_User","objectId":"' + userID + '"}}'
         });
     }
@@ -102,6 +105,7 @@ var questionsModule = (function () {
                 "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
                 "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
             },
+            data: 'include=createdBy,category&order=-createdAt',
             url: 'https://api.parse.com/1/classes/Question?where={"title":{"$regex":"' + keyword + '", "$options":"i"}}'
         });
     }
@@ -129,27 +133,45 @@ var questionsModule = (function () {
             url: "https://api.parse.com/1/classes/Question/" + questionID
         });
     }
-	
-	function getAllTagsRelatedToQuestion(questionID){
-		return $.ajax({
-			method: "GET",
-			headers: {
-				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
-				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
-			},
-			data: 'where=' + JSON.stringify({
-				$relatedTo:{
-					object: {
-						__type: "Pointer",
-						className:"Question",
-						objectId: questionID
-					},
-					key: "tags"
-				}
-			}),
-			url: 'https://api.parse.com/1/classes/Tag'});
-	}
 
+    function getAllQuestionRelatedToTag(tagId) {
+        return $.ajax({
+            method: "GET",
+            headers: {
+                "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+                "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+            },
+            data: 'where=' + JSON.stringify({
+                $relatedTo:{
+                    object: {
+                        __type: "Pointer",
+                        className:"Tag",
+                        objectId: tagId
+                    },
+                    key: "question"
+                }
+            }) + '&include=createdBy,category&order=-createdAt',
+            url: 'https://api.parse.com/1/classes/Question'});
+    }
+
+    function upVisitsByOne(questionID) {
+        getQuestionByID(questionID).success(function (data) {
+            var visits = data.visits;
+
+            $.ajax({
+                method: "PUT",
+                headers: {
+                    "X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+                    "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+                },
+                data: JSON.stringify({
+                    'visits': visits+1
+                }),
+                url: 'https://api.parse.com/1/classes/Question/' + questionID
+            });
+        });
+
+    }
     return {
         addQuestion: addQuestion,
         getQuestionByID: getQuestionByID,
@@ -159,6 +181,7 @@ var questionsModule = (function () {
         searchQuestionsByTitle: searchQuestionsByTitle,
         deleteQuestion: deleteQuestion,
         editQuestion: editQuestion,
-		getAllTagsRelatedToQuestion:getAllTagsRelatedToQuestion
+        getAllQuestionRelatedToTag: getAllQuestionRelatedToTag,
+        upVisitsByOne: upVisitsByOne
     }
 })();

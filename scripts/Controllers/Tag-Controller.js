@@ -12,13 +12,12 @@ var TagsController =(function() {
 				var tagsHTML = TagView.visualizeTags(tag);
 				tagsHTML.data("tag", tag);
 				var count = 0;
-				var countQuestionWithTag = tagModule.getAllQuestionRelatedToTag(tag.objectId);
+				var countQuestionWithTag = questionsModule.getAllQuestionRelatedToTag(tag.objectId);
 				var countQuestion = countQuestionWithTag.success(function(data) {
 					count = data.results.length;
 					var tagId = tag.objectId;
 					$('#'+tagId).css({"font-size": 16 + count + "px"});
-				})
-				tagsHTML.click(visualizeQuestionsOnTagClick);
+				});
 				tagsDiv.append(tagsHTML[0]);
 
 			})
@@ -45,19 +44,11 @@ var TagsController =(function() {
 
 
 
-	function visualizeQuestionsOnTagClick(){
-		var tag = $(this).data('tag');
-		var realationPromise = tagModule.getAllQuestionRelatedToTag(tag.objectId);
-		realationPromise.success(function(data){
-			var allRelations = data.results;
-			console.log("a" + allRelations);
 
-			questionController.VisualizeSmallQuestions(allRelations, 'main');
-			})
-		realationPromise.error(function (err) {
-            console.log(err);
-        });
-		
+	function visualizeQuestions(tagId, selector) {
+		questionsModule.getAllQuestionRelatedToTag(tagId).success(function (data) {
+            questionController.getAndVisualizeSmallQuestions(data.results, selector);
+        })
 	}
 
 	function handleError() {
@@ -66,7 +57,8 @@ var TagsController =(function() {
 
 	return {
 		getAndVisualizeTags: getAndVisualizeTags,
-		checkIfTagExitsByName: checkIfTagExitsByName
+		checkIfTagExitsByName: checkIfTagExitsByName,
+        visualizeQuestions: visualizeQuestions
 	}
 
 })();

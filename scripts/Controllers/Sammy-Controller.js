@@ -16,10 +16,14 @@ $(function () {
             mainSelector.text('');
             questionController.VisualizeAddQuestion(mainSelector);
         });
-        
+        this.get('#/view/tag/:id', function (context) {
+            mainSelector.text('');
+            TagsController.visualizeQuestions(this.params['id'], mainSelector);
+        });
+
         this.get('#/category/:id', function (context) {
-            categoryController.getAndVisualizeSingleCategory(this.params['id']);
-            // TODO: implement getAndVisualizeQuestionsByCategoryId()
+            mainSelector.text('');
+            categoryController.getAndVisualizeSingleCategory(this.params['id'], mainSelector);
         });
 
         this.get('#/user/:id', function (context) {

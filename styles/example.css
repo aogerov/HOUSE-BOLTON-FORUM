@@ -136,7 +136,25 @@ article.small-question{
 	margin-bottom: 3%;
 }
 
-article.large-question > header{
+article.small-question a {
+    text-decoration: underline;
+}
+article.small-question header {
+    line-height: 25px;
+}
+article.large-question h3 {
+    margin-bottom: 0;
+}
+article.small-question h2 {
+    margin-bottom: 0;
+}
+p.small-question-content {
+    margin-top: 12px;
+}
+.small-question-category {
+    float: right;
+}
+main.large-question > header{
 	background-color: #FFF;
 	border-radius: 5px;
 	-moz-border-radius: 5px;
@@ -144,14 +162,15 @@ article.large-question > header{
 	padding: 3% 5%;	
 }
 
-article.large-question > form {
+main > form {
 	background-color: white;
 	padding: 2.5%;
 	border-radius: 5px;
 	margin-left: 5%;
 	width: 90%;
+    margin-top: 20px;
 }
-article.large-question > form > button{
+main > form > button{
 	width: 25%;
 	background-color: lightskyblue;
 	border: 1px solid lightslategray;
@@ -161,34 +180,33 @@ article.large-question > form > button{
 	border-radius: 15px;
 }
 
-article.large-question > form > textarea{
+main > form > textarea{
 	margin: 0px;
 	height: 50px;
 	padding: 0;
 	width: 100%;
 	border-radius: 5px;
 }
-article.large-question > ul{
+main > ul{
 	padding-left: 5%;
 }
 
-article > ul > li{
+main > ul > li{
 	background-color: #CEEFFD;
 	padding: 20px;
 	list-style: none;
 	border-radius: 5px;
-	margin: 10px 0;
+	margin-top: 20px;
 }
-article > ul > li>img.avatar-img{
+main > ul > li>img.avatar-img{
 	width:50px;
 	height:50px;
 }
-article > ul > li> div{
+main > ul > li> div{
 	display:inline-block;
-	text-align:top;
 }
 
-article > ul > li> div>*{
+main > ul > li> div>*{
 	display:inline-block;
 }
 
@@ -204,11 +222,19 @@ article > ul > li> div>*{
 	font-style: italic;
 	color: #999;
 	font-size: 85%;
+    margin-left: 5px;
+}
+.post-info>* {
+    margin-right: 5px;
 }
 
-main h1 {
-	padding: 10px;
+main .category-title {
+	padding: 5%;
 	background: #fff;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    margin-bottom: 20px;
 }
 
 #add-question{
@@ -219,13 +245,15 @@ main h1 {
     display: block;
 }
 
+
 /*
    ======== Sidebar ========== 
   */
 
 aside {
 	width: 24%;
-	float: left;
+	float: right;
+    clear: right;
 	margin-left: 2%;
 	border-radius: 5px;
 	-moz-border-radius: 5px;

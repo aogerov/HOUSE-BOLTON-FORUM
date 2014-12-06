@@ -1,48 +1,35 @@
 var questionView = (function () {
-    function visualizeSmallQuestion(questionID, questionTitle, questionContent, questionAuthor, questionCategory, questionTags, questionVisits, questionVotes, questionAuthorId){
-        var title = $('<a href="#/view/question/'+ questionID + '">').append($('<h2 data-id="' + questionID + '">').attr('class', 'small-question-title').text(questionTitle));
+    function visualizeSmallQuestion(questionID, questionCreatedAt, questionTitle, questionContent, questionAuthor, questionCategory, questionCategoryID, questionTags, questionVisits, questionVotes, questionAuthorId){
+        var title = $('<h2 data-id="' + questionID + '">').attr('class', 'small-question-title').append($('<a href="#/view/question/'+ questionID + '">').text(questionTitle));
         var content = $('<p>').attr('class', 'small-question-content').text(questionContent);
-        var author = $('<a href="#/user/' + questionAuthorId + '">').attr('class', 'small-question-author').text(questionAuthor);
-        var category = $('<span>').attr('class', 'small-question-category').text(questionCategory);
-        var tags = $('<span>').attr('class', 'small-question-tags').text(questionTags);
-        var visits = $('<span>').attr('class', 'small-question-visits').text(questionVisits);
-        var votes = $('<span>').attr('class', 'small-question-votes').text(questionVotes);
+        var $divPostInfo = $('<div>').addClass('post-info');
+        var author = $('<a href="#/user/' + questionAuthorId + '">').attr('class', 'small-question-author').text('Author: ' + questionAuthor);
+        var date = $('<span>').text(new Date(questionCreatedAt).toLocaleString());
+        var category = $('<a href="#/category/' + questionCategoryID + '">').attr('class', 'small-question-category').text(questionCategory);
+        var tags = [];
+        $.each(questionTags, function (_, tag) {
+            tags.push($('<a href="#/view/tag/' + tag.objectId + '">').text(tag.name));
+        });
 
-//        <article>
-//            <header>
-//                <h2><a href="#" rel="bookmark" title="title">Questions</a></h2>
-//            </header>
-//
-//            <footer>
-//                <p class="post-info">User</p>
-//            </footer>
-//
-//            <content>
-//                <p>Questions</p>
-//                <p>Answers</p>
-//            </content>
-//
-//        </article>
+        var visits = $('<span>').attr('class', 'small-question-visits').text('Visits: ' + questionVisits);
 
-
-
-        var question = $('<article class="small-question">')
-            .append($('<header>').append(title))
+        var question = $('<article class="small-question">').attr('data-id', questionID)
+            .append($('<header>').append(category).append(title).append($divPostInfo.append(author).append(date).append(visits)))
             .append($('<main>').append(content))
-            .append($('<footer>').append(author).append(category).append(tags).append(visits).append(votes));
+            .append($('<footer>').append(tags));
         return question;
     }
 
-    function visualizeLargeQuestionWithAnswers(questionTitle, questionContent, questionAuthor, questionID) {
+    function visualizeLargeQuestionWithAnswers(questionTitle, questionContent, questionAuthor, questionAuthorID, questionID) {
         var title = $('<h3>').attr('class', 'large-question-title').text(questionTitle);
         var content = $('<span>').attr('class', 'large-question-content').text(questionContent);
-        var author = $('<span>').attr('class', 'large-question-author').text(questionAuthor);
+        var author = $('<div>').addClass('post-info').append($('<a href="#/user/' + questionAuthorID + '">').text(questionAuthor));
 
         var article = $('<article>').addClass('large-question').attr('data-id',questionID);
 		var question = $('<header>')
             .append(title)
-            .append(content)
-            .append(author);
+            .append(author)
+            .append(content);
 			article.append(question);
         return article;
     }
