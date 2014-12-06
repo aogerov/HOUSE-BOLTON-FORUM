@@ -6,14 +6,29 @@ var tagModule = (function() {
 				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
 				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 			},
-			url: "https://api.parse.com/1/classes/Tag"
+			url: "https://api.parse.com/1/classes/Tag?"
 		});
 	}
 
-	function addTag(name) {
+	function addTag(name, questionIdsArray) {
 		var tag = {
-			name: name
+			name: name,
+			question: {
+				__op: "AddRelation",
+				objects: []
+			}
 		};
+
+		var questionPointers = [];
+		questionIdsArray.forEach(function(questionId){
+			questionPointers.push({
+				__type: "Pointer",
+				className: "Question",
+				objectId: questionId
+			})
+		});
+
+		tag.question.objects = questionPointers;
 
 		return $.ajax({
 			type: "POST",
@@ -45,7 +60,7 @@ var tagModule = (function() {
 				method: "GET",
 				headers: {
 					"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
-                "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+           			 "X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 				},
 				url: 'https://api.parse.com/1/classes/Tag?where={"name":"' + name +'"}',
 			});
@@ -63,7 +78,20 @@ var tagModule = (function() {
 
 	}
 	
-	function editTag(tagId, content) {
+	function editTag(tagId, questionId) {
+		var tag = {
+			question: {
+				__op: "AddRelation",
+				objects: []
+			}
+		}
+
+			tag.question.objects.push({
+				__type: "Pointer",
+				className: "Question",
+				objectId: questionId
+		});
+
 		return $.ajax({
 				method: "PUT",
 				headers: {
@@ -71,11 +99,34 @@ var tagModule = (function() {
 					"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
 				},
 				url: "https://api.parse.com/1/classes/Tag/" + tagId,
-				data: JSON.stringify(
-					{"visited": content}
-				),
+				data: JSON.stringify(tag),
 				contentType: "application/json"
 			});
+	}
+
+	function getAllQuestionRelatedToTag(tagId) {
+		return $.ajax({
+			method: "GET",
+			headers: {
+				"X-Parse-Application-Id": parseConstants.PARSE_APPLICATION_ID,
+				"X-Parse-REST-API-Key": parseConstants.PARSE_REST_API_KEY
+			},
+
+			// data: 'where=' + JSON.stringify({
+			// 	$relatedTo:{
+			// 		object: {
+			// 			__type: "Pointer",
+			// 			className:"Tag",
+			// 			objectId: tagId
+			// 		},
+			// 		key: "question"
+			// 	}
+			// }),
+			// url: 'https://api.parse.com/1/classes/Question'});
+
+
+			url: 'https://api.parse.com/1/classes/Question?where={"$relatedTo":{"object":{"__type":"Pointer","className":"Tag","objectId":"'+ tagId +'"},"key":"question"}}'
+	})
 	}
 	
 	return {
@@ -84,7 +135,8 @@ var tagModule = (function() {
 		deleteTag: deleteTag,
 		getTagByName: getTagByName,
 		getTagById: getTagById,
-		editTag: editTag
+		editTag: editTag,
+		getAllQuestionRelatedToTag: getAllQuestionRelatedToTag
 		
 	}
 })();
